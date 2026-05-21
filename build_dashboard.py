@@ -1783,6 +1783,12 @@ def build_mobile_html(data: dict[str, Any]) -> str:
       min-width: 720px;
     }}
 
+    #heatmap th {{
+      text-transform: none;
+      font-size: 12px;
+      line-height: 1.25;
+    }}
+
     .speech-list {{
       display: grid;
       gap: 10px;
