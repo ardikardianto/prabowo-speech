@@ -13,6 +13,8 @@ DISCOURSE_XLSX = BASE_DIR / "Prabowo Speeches - Discourse Situational Context An
 VISUAL_XLSX = BASE_DIR / "Prabowo Speeches - Visual Mapping Counts.xlsx"
 OUT_DIR = BASE_DIR / "interactive_dashboard"
 OUT_FILE = OUT_DIR / "index.html"
+MOBILE_OUT_DIR = BASE_DIR / "mobile_dashboard"
+MOBILE_OUT_FILE = MOBILE_OUT_DIR / "index.html"
 
 
 def cell_value(value: Any) -> Any:
@@ -1444,6 +1446,796 @@ def build_html(data: dict[str, Any]) -> str:
 """
 
 
+def build_mobile_html(data: dict[str, Any]) -> str:
+    data_json = json.dumps(data, ensure_ascii=False)
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Prabowo Speeches Mobile Dashboard</title>
+  <style>
+    :root {{
+      --ink: #271d23;
+      --muted: #75676e;
+      --paper: #fff7f8;
+      --panel: #fffdf8;
+      --line: #e6d8d3;
+      --rose: #8f253c;
+      --coral: #b43632;
+      --gold: #f6d58e;
+      --indigo: #4b4aa5;
+      --teal: #0f766e;
+      --shadow: 0 14px 34px rgba(80, 48, 42, 0.13);
+    }}
+
+    * {{ box-sizing: border-box; }}
+
+    body {{
+      margin: 0;
+      min-width: 320px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        linear-gradient(140deg, rgba(143, 37, 60, 0.08), rgba(246, 213, 142, 0.16)),
+        var(--paper);
+      color: var(--ink);
+      padding-bottom: 82px;
+    }}
+
+    header {{
+      padding: 22px 18px 20px;
+      color: #fff8e8;
+      background:
+        repeating-linear-gradient(135deg, rgba(255, 248, 232, 0.035) 0 1px, transparent 1px 14px),
+        linear-gradient(130deg, #64162b, #8f253c 48%, #b77b24);
+      border-bottom: 5px solid var(--gold);
+    }}
+
+    .kicker {{
+      margin: 0 0 10px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }}
+
+    h1 {{
+      margin: 0;
+      font-family: "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+      font-size: clamp(36px, 13vw, 54px);
+      line-height: 0.98;
+      color: #fff8e8;
+      text-shadow: 0 3px 18px rgba(39, 29, 35, 0.28);
+    }}
+
+    .subtitle {{
+      margin: 12px 0 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 16px;
+      line-height: 1.45;
+      color: rgba(255, 248, 232, 0.9);
+    }}
+
+    .mobile-nav {{
+      position: fixed;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      z-index: 20;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      padding: 7px;
+      border: 1px solid rgba(143, 37, 60, 0.18);
+      border-radius: 16px;
+      background: rgba(255, 253, 248, 0.94);
+      box-shadow: 0 18px 44px rgba(80, 48, 42, 0.2);
+      backdrop-filter: blur(14px);
+    }}
+
+    .mobile-nav button {{
+      min-height: 44px;
+      border: 0;
+      border-radius: 12px;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-size: 12px;
+      font-weight: 800;
+    }}
+
+    .mobile-nav button.active {{
+      background: var(--rose);
+      color: #fff8e8;
+    }}
+
+    main {{
+      padding: 16px 12px 0;
+    }}
+
+    .view {{ display: none; }}
+    .view.active {{ display: block; }}
+
+    .mobile-filters {{
+      display: grid;
+      gap: 8px;
+      margin-bottom: 14px;
+    }}
+
+    input, select {{
+      width: 100%;
+      min-height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      color: var(--ink);
+      padding: 0 12px;
+      font: inherit;
+      font-size: 15px;
+    }}
+
+    .reset {{
+      min-height: 46px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--rose);
+      color: #fff8e8;
+      font-weight: 800;
+    }}
+
+    .card {{
+      margin-bottom: 12px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background:
+        linear-gradient(180deg, rgba(246, 213, 142, 0.14), rgba(255, 255, 255, 0) 42%),
+        var(--panel);
+      box-shadow: var(--shadow);
+    }}
+
+    .card h2 {{
+      margin: 0 0 12px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 23px;
+      line-height: 1.15;
+      color: var(--rose);
+    }}
+
+    .kpis {{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }}
+
+    .kpi {{
+      padding: 13px;
+      min-height: 104px;
+      border: 1px solid var(--line);
+      border-top: 5px solid var(--gold);
+      border-radius: 12px;
+      background: var(--panel);
+      box-shadow: 0 8px 24px rgba(80, 48, 42, 0.09);
+    }}
+
+    .kpi span {{
+      display: block;
+      color: var(--rose);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }}
+
+    .kpi strong {{
+      display: block;
+      margin-top: 10px;
+      font-size: 30px;
+      line-height: 1;
+    }}
+
+    .kpi small {{
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      line-height: 1.3;
+    }}
+
+    .bar-row {{
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      margin: 12px 0;
+      align-items: center;
+    }}
+
+    .bar-label {{
+      font-size: 13px;
+      line-height: 1.3;
+    }}
+
+    .bar-value {{
+      color: var(--muted);
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }}
+
+    .bar-track {{
+      grid-column: 1 / -1;
+      height: 12px;
+      border-radius: 999px;
+      background: #f0e6df;
+      overflow: hidden;
+    }}
+
+    .bar-fill {{
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--rose), var(--coral));
+    }}
+
+    .bar-fill.indigo {{
+      background: linear-gradient(90deg, var(--indigo), #7872d8);
+    }}
+
+    .donut-wrap {{
+      display: grid;
+      justify-items: center;
+      gap: 14px;
+    }}
+
+    .donut {{
+      width: min(62vw, 220px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      position: relative;
+      box-shadow: 0 14px 30px rgba(80, 48, 42, 0.12);
+    }}
+
+    .donut::after {{
+      content: "";
+      position: absolute;
+      inset: 27%;
+      border-radius: 50%;
+      background: var(--panel);
+      border: 1px solid var(--line);
+    }}
+
+    .legend {{
+      width: 100%;
+      display: grid;
+      gap: 8px;
+    }}
+
+    .legend-row {{
+      display: grid;
+      grid-template-columns: 12px 1fr auto;
+      gap: 8px;
+      align-items: center;
+      font-size: 13px;
+    }}
+
+    .swatch {{
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+    }}
+
+    .line-chart {{
+      width: 100%;
+      height: auto;
+      display: block;
+    }}
+
+    .line-grid {{ stroke: #efe4dc; }}
+    .line-axis {{ stroke: #d8c9c3; }}
+    .line-path {{
+      fill: none;
+      stroke: var(--rose);
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }}
+    .line-area {{ fill: rgba(143, 37, 60, 0.12); }}
+    .line-point {{
+      fill: var(--panel);
+      stroke: var(--rose);
+      stroke-width: 3;
+    }}
+    .line-label, .line-value {{
+      fill: var(--muted);
+      font-size: 12px;
+    }}
+    .line-value {{
+      fill: var(--ink);
+      font-weight: 800;
+    }}
+
+    table {{
+      width: 100%;
+      border-collapse: collapse;
+    }}
+
+    th, td {{
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 13px;
+      line-height: 1.35;
+    }}
+
+    th {{
+      color: var(--rose);
+      background: #fff1e6;
+      font-size: 11px;
+      text-transform: uppercase;
+    }}
+
+    .scroll-table {{
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+    }}
+
+    .scroll-table table {{
+      min-width: 720px;
+    }}
+
+    .speech-list {{
+      display: grid;
+      gap: 10px;
+    }}
+
+    .speech-card {{
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+    }}
+
+    .speech-card strong {{
+      display: block;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }}
+
+    .speech-meta {{
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }}
+
+    .pager {{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }}
+
+    .pager button {{
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      color: var(--rose);
+      font-weight: 800;
+    }}
+
+    .framework-item {{
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      margin-bottom: 10px;
+    }}
+
+    .framework-item h3 {{
+      margin: 0 0 8px;
+      color: var(--rose);
+      font-family: Georgia, "Times New Roman", serif;
+    }}
+
+    @media (min-width: 760px) {{
+      body::before {{
+        content: "This is the mobile dashboard. Open ../interactive_dashboard/index.html for the desktop version.";
+        display: block;
+        padding: 10px 14px;
+        color: #fff8e8;
+        background: var(--rose);
+        text-align: center;
+        font-size: 13px;
+      }}
+    }}
+  </style>
+</head>
+<body>
+  <header>
+    <p class="kicker">Mobile Dashboard</p>
+    <h1>Prabowo Speeches</h1>
+    <p class="subtitle">A phone-friendly view of discourse patterns across the speech corpus.</p>
+  </header>
+
+  <nav class="mobile-nav" aria-label="Mobile dashboard sections">
+    <button class="active" data-view="overview">Overview</button>
+    <button data-view="summary">Summary</button>
+    <button data-view="framework">Framework</button>
+    <button data-view="table">Table</button>
+  </nav>
+
+  <main>
+    <section id="overview" class="view active">
+      <div class="mobile-filters" data-filter-surface>
+        <input id="searchInput" type="search" placeholder="Search speeches" />
+        <select id="languageFilter"></select>
+        <select id="yearFilter"></select>
+        <select id="interactionFilter"></select>
+        <select id="domainFilter"></select>
+        <button class="reset" id="clearFilters">Reset Filters</button>
+      </div>
+      <div class="kpis" id="kpis"></div>
+      <article class="card">
+        <h2>Language Mix</h2>
+        <div id="languageChart"></div>
+      </article>
+      <article class="card">
+        <h2>Monthly Speech Trend</h2>
+        <div id="timelineChart"></div>
+      </article>
+      <article class="card">
+        <h2>Interaction Type</h2>
+        <div id="interactionChart"></div>
+      </article>
+      <article class="card">
+        <h2>Field Domain</h2>
+        <div id="domainChart"></div>
+      </article>
+      <article class="card">
+        <h2>Interaction by Domain</h2>
+        <div class="scroll-table" id="heatmap"></div>
+      </article>
+    </section>
+
+    <section id="summary" class="view">
+      <article class="card">
+        <h2>Corpus and Languages</h2>
+        <div id="summaryCorpus"></div>
+      </article>
+      <article class="card">
+        <h2>Interaction Type</h2>
+        <div id="summaryInteraction"></div>
+      </article>
+      <article class="card">
+        <h2>Field Domain</h2>
+        <div id="summaryDomain"></div>
+      </article>
+      <article class="card">
+        <h2>Visual Mapping Counts</h2>
+        <div id="visualMapping"></div>
+      </article>
+    </section>
+
+    <section id="framework" class="view">
+      <article class="card">
+        <h2>Framework</h2>
+        <div id="frameworkList"></div>
+      </article>
+    </section>
+
+    <section id="table" class="view">
+      <div class="mobile-filters" data-filter-surface>
+        <input id="tableSearchInput" type="search" placeholder="Search speeches" />
+        <select id="tableLanguageFilter"></select>
+        <select id="tableYearFilter"></select>
+        <select id="tableInteractionFilter"></select>
+        <select id="tableDomainFilter"></select>
+        <button class="reset" id="tableClearFilters">Reset Filters</button>
+      </div>
+      <article class="card">
+        <h2>Analysis Table</h2>
+        <p class="speech-meta" id="tableStatus"></p>
+        <div class="speech-list" id="speechList"></div>
+        <div class="pager">
+          <button id="prevPage">Previous</button>
+          <button id="nextPage">Next</button>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    const DATA = {data_json};
+    const state = {{
+      view: "overview",
+      search: "",
+      language: "All languages",
+      year: "All years",
+      interaction: "All interaction types",
+      domain: "All field domains",
+      page: 1,
+      pageSize: 12
+    }};
+    const colors = ["#8f253c", "#c48a2b", "#0f766e", "#4b4aa5", "#b43632"];
+    const fmt = new Intl.NumberFormat("en-US");
+    const pct = value => `${{Math.round((Number(value) || 0) * 1000) / 10}}%`;
+    const esc = value => String(value ?? "").replace(/[&<>"']/g, char => ({{ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }}[char]));
+    const titleCase = text => String(text || "").replace(/\\w\\S*/g, word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+
+    function uniq(values) {{
+      return [...new Set(values.filter(Boolean))].sort((a, b) => String(a).localeCompare(String(b)));
+    }}
+
+    function countBy(rows, key) {{
+      const map = new Map();
+      rows.forEach(row => {{
+        const value = row[key] || "Unspecified";
+        map.set(value, (map.get(value) || 0) + 1);
+      }});
+      return [...map.entries()].map(([label, value]) => ({{ label, value }})).sort((a, b) => b.value - a.value || a.label.localeCompare(b.label));
+    }}
+
+    function filteredRows() {{
+      return DATA.analysis.filter(row => {{
+        const text = [row.event, row.interactionType, row.fieldDomain, row.field, row.tenor, row.mode, row.openingEvidence].join(" ").toLowerCase();
+        return (!state.search || text.includes(state.search))
+          && (state.language === "All languages" || row.language === state.language)
+          && (state.year === "All years" || row.year === state.year)
+          && (state.interaction === "All interaction types" || row.interactionType === state.interaction)
+          && (state.domain === "All field domains" || row.fieldDomain === state.domain);
+      }});
+    }}
+
+    function fillSelect(id, label, values) {{
+      const el = document.getElementById(id);
+      el.innerHTML = [`<option>${{label}}</option>`, ...values.map(value => `<option>${{esc(value)}}</option>`)].join("");
+      el.value = stateFromLabel(label);
+    }}
+
+    function stateFromLabel(label) {{
+      if (label.includes("languages")) return state.language;
+      if (label.includes("years")) return state.year;
+      if (label.includes("interaction")) return state.interaction;
+      if (label.includes("field")) return state.domain;
+      return label;
+    }}
+
+    function syncFilterInputs() {{
+      const pairs = [
+        ["searchInput", state.search], ["tableSearchInput", state.search],
+        ["languageFilter", state.language], ["tableLanguageFilter", state.language],
+        ["yearFilter", state.year], ["tableYearFilter", state.year],
+        ["interactionFilter", state.interaction], ["tableInteractionFilter", state.interaction],
+        ["domainFilter", state.domain], ["tableDomainFilter", state.domain]
+      ];
+      pairs.forEach(([id, value]) => {{
+        const el = document.getElementById(id);
+        if (el) el.value = value;
+      }});
+    }}
+
+    function initFilters() {{
+      ["languageFilter", "tableLanguageFilter"].forEach(id => fillSelect(id, "All languages", uniq(DATA.analysis.map(d => d.language))));
+      ["yearFilter", "tableYearFilter"].forEach(id => fillSelect(id, "All years", uniq(DATA.analysis.map(d => d.year))));
+      ["interactionFilter", "tableInteractionFilter"].forEach(id => fillSelect(id, "All interaction types", uniq(DATA.analysis.map(d => d.interactionType))));
+      ["domainFilter", "tableDomainFilter"].forEach(id => fillSelect(id, "All field domains", uniq(DATA.analysis.map(d => d.fieldDomain))));
+
+      [["searchInput", "search"], ["tableSearchInput", "search"]].forEach(([id]) => {{
+        document.getElementById(id).addEventListener("input", event => {{
+          state.search = event.target.value.trim().toLowerCase();
+          state.page = 1;
+          syncFilterInputs();
+          render();
+        }});
+      }});
+      [["languageFilter", "language"], ["tableLanguageFilter", "language"], ["yearFilter", "year"], ["tableYearFilter", "year"], ["interactionFilter", "interaction"], ["tableInteractionFilter", "interaction"], ["domainFilter", "domain"], ["tableDomainFilter", "domain"]].forEach(([id, key]) => {{
+        document.getElementById(id).addEventListener("change", event => {{
+          state[key] = event.target.value;
+          state.page = 1;
+          syncFilterInputs();
+          render();
+        }});
+      }});
+      ["clearFilters", "tableClearFilters"].forEach(id => document.getElementById(id).addEventListener("click", () => {{
+        state.search = "";
+        state.language = "All languages";
+        state.year = "All years";
+        state.interaction = "All interaction types";
+        state.domain = "All field domains";
+        state.page = 1;
+        syncFilterInputs();
+        render();
+      }}));
+    }}
+
+    function renderKpis(rows) {{
+      const words = rows.reduce((sum, row) => sum + (Number(row.wordCount) || 0), 0);
+      const topInteraction = countBy(rows, "interactionType")[0];
+      const topDomain = countBy(rows, "fieldDomain")[0];
+      const kpis = [
+        ["Speeches", fmt.format(rows.length), `${{fmt.format(DATA.analysis.length)}} total`],
+        ["Words", fmt.format(words), `${{fmt.format(Math.round(words / Math.max(rows.length, 1)))}} avg`],
+        ["Languages", fmt.format(uniq(rows.map(row => row.language)).length), countBy(rows, "language").map(d => `${{d.label}} ${{d.value}}`).join(" | ")],
+        ["Top Type", topInteraction ? fmt.format(topInteraction.value) : "0", topInteraction?.label || "No match"],
+        ["Top Domain", topDomain ? fmt.format(topDomain.value) : "0", topDomain?.label || "No match"]
+      ];
+      document.getElementById("kpis").innerHTML = kpis.map(kpi => `
+        <div class="kpi"><span>${{esc(kpi[0])}}</span><strong>${{esc(kpi[1])}}</strong><small>${{esc(kpi[2])}}</small></div>
+      `).join("");
+    }}
+
+    function renderBars(id, rows, key, className = "") {{
+      const data = countBy(rows, key);
+      const max = Math.max(...data.map(d => d.value), 1);
+      document.getElementById(id).innerHTML = data.map(d => `
+        <div class="bar-row">
+          <div class="bar-label">${{esc(d.label)}}</div>
+          <div class="bar-value">${{fmt.format(d.value)}} (${{pct(d.value / Math.max(rows.length, 1))}})</div>
+          <div class="bar-track"><div class="bar-fill ${{className}}" style="width:${{Math.max(3, d.value / max * 100)}}%"></div></div>
+        </div>
+      `).join("") || `<p class="speech-meta">No matching speeches.</p>`;
+    }}
+
+    function renderLanguage(rows) {{
+      const data = countBy(rows, "language");
+      const total = rows.length || 1;
+      let angle = 0;
+      const stops = data.map((d, idx) => {{
+        const start = angle;
+        angle += (d.value / total) * 360;
+        return `${{colors[idx % colors.length]}} ${{start}}deg ${{angle}}deg`;
+      }}).join(", ");
+      document.getElementById("languageChart").innerHTML = `
+        <div class="donut-wrap">
+          <div class="donut" style="background:${{stops ? `conic-gradient(${{stops}})` : "#f0e6df"}}"></div>
+          <div class="legend">
+            ${{data.map((d, idx) => `<div class="legend-row"><span class="swatch" style="background:${{colors[idx % colors.length]}}"></span><span>${{esc(d.label)}}</span><strong>${{d.value}} (${{pct(d.value / total)}})</strong></div>`).join("")}}
+          </div>
+        </div>
+      `;
+    }}
+
+    function renderTimeline(rows) {{
+      const map = new Map();
+      rows.forEach(row => {{
+        if (!row.date) return;
+        const key = row.date.slice(0, 7);
+        map.set(key, (map.get(key) || 0) + 1);
+      }});
+      const data = [...map.entries()].sort().map(([label, value]) => ({{ label, value }}));
+      if (!data.length) {{
+        document.getElementById("timelineChart").innerHTML = `<p class="speech-meta">No matching dates.</p>`;
+        return;
+      }}
+      const width = 360;
+      const height = 210;
+      const pad = {{ left: 26, right: 12, top: 24, bottom: 34 }};
+      const max = Math.max(...data.map(d => d.value), 1);
+      const plotWidth = width - pad.left - pad.right;
+      const plotHeight = height - pad.top - pad.bottom;
+      const bottomY = height - pad.bottom;
+      const points = data.map((d, index) => {{
+        const x = data.length === 1 ? pad.left + plotWidth / 2 : pad.left + (index / (data.length - 1)) * plotWidth;
+        const y = bottomY - (d.value / max) * plotHeight;
+        return {{ ...d, x, y }};
+      }});
+      const path = points.map((point, index) => `${{index ? "L" : "M"}} ${{point.x.toFixed(1)}} ${{point.y.toFixed(1)}}`).join(" ");
+      const area = `${{path}} L ${{points[points.length - 1].x.toFixed(1)}} ${{bottomY}} L ${{points[0].x.toFixed(1)}} ${{bottomY}} Z`;
+      const labelEvery = Math.max(1, Math.ceil(data.length / 5));
+      document.getElementById("timelineChart").innerHTML = `
+        <svg class="line-chart" viewBox="0 0 ${{width}} ${{height}}" role="img" aria-label="Monthly speech trend">
+          <line class="line-grid" x1="${{pad.left}}" x2="${{width - pad.right}}" y1="${{pad.top}}" y2="${{pad.top}}"></line>
+          <line class="line-grid" x1="${{pad.left}}" x2="${{width - pad.right}}" y1="${{bottomY - plotHeight / 2}}" y2="${{bottomY - plotHeight / 2}}"></line>
+          <line class="line-axis" x1="${{pad.left}}" x2="${{width - pad.right}}" y1="${{bottomY}}" y2="${{bottomY}}"></line>
+          <path class="line-area" d="${{area}}"></path>
+          <path class="line-path" d="${{path}}"></path>
+          ${{points.map(point => `<circle class="line-point" cx="${{point.x.toFixed(1)}}" cy="${{point.y.toFixed(1)}}" r="4"></circle>`).join("")}}
+          ${{points.map(point => `<text class="line-value" x="${{point.x.toFixed(1)}}" y="${{Math.max(13, point.y - 9).toFixed(1)}}" text-anchor="middle">${{point.value}}</text>`).join("")}}
+          ${{points.map((point, index) => index % labelEvery === 0 || index === points.length - 1 ? `<text class="line-label" x="${{point.x.toFixed(1)}}" y="${{height - 10}}" text-anchor="middle">${{esc(point.label.slice(5) + "/" + point.label.slice(2, 4))}}</text>` : "").join("")}}
+        </svg>
+      `;
+    }}
+
+    function renderHeatmap(rows) {{
+      const interactions = countBy(rows, "interactionType").map(d => d.label);
+      const domains = countBy(rows, "fieldDomain").map(d => d.label);
+      const max = Math.max(...interactions.flatMap(i => domains.map(d => rows.filter(row => row.interactionType === i && row.fieldDomain === d).length)), 1);
+      const head = `<tr><th>Interaction</th>${{domains.map(d => `<th>${{esc(titleCase(d))}}</th>`).join("")}}</tr>`;
+      const body = interactions.map(interaction => `
+        <tr>
+          <td><strong>${{esc(titleCase(interaction))}}</strong></td>
+          ${{domains.map(domain => {{
+            const value = rows.filter(row => row.interactionType === interaction && row.fieldDomain === domain).length;
+            const alpha = value ? 0.12 + (value / max) * 0.62 : 0;
+            return `<td style="background:rgba(143,37,60,${{alpha}}); text-align:center; font-variant-numeric:tabular-nums;">${{value || ""}}</td>`;
+          }}).join("")}}
+        </tr>
+      `).join("");
+      document.getElementById("heatmap").innerHTML = rows.length ? `<table>${{head}}${{body}}</table>` : `<p class="speech-meta">No matching speeches.</p>`;
+    }}
+
+    function summaryTable(rows) {{
+      return `<table><thead><tr><th>Category</th><th>Count</th><th>Share</th></tr></thead><tbody>${{rows.map(row => `<tr><td>${{esc(row.category)}}</td><td>${{fmt.format(row.count || 0)}}</td><td>${{typeof row.share === "number" ? pct(row.share) : esc(row.share || "")}}</td></tr>`).join("")}}</tbody></table>`;
+    }}
+
+    function renderSummary() {{
+      document.getElementById("summaryCorpus").innerHTML = summaryTable(DATA.summary.filter(row => row.metric === "Total speeches" || row.metric === "Language group"));
+      document.getElementById("summaryInteraction").innerHTML = summaryTable(DATA.summary.filter(row => row.metric === "Interaction type"));
+      document.getElementById("summaryDomain").innerHTML = summaryTable(DATA.summary.filter(row => row.metric === "Field domain"));
+      document.getElementById("visualMapping").innerHTML = `
+        <h3>Interaction Types</h3>
+        ${{DATA.visual.interactionTypes.map(item => `<div class="bar-row"><div class="bar-label">${{esc(item.category)}}</div><div class="bar-value">${{item.count}} (${{pct(item.share)}})</div><div class="bar-track"><div class="bar-fill" style="width:${{Math.max(3, item.share * 100)}}%"></div></div></div>`).join("")}}
+        <h3>Field Domains</h3>
+        ${{DATA.visual.fieldDomains.map(item => `<div class="bar-row"><div class="bar-label">${{esc(item.category)}}</div><div class="bar-value">${{item.count}} (${{pct(item.share)}})</div><div class="bar-track"><div class="bar-fill indigo" style="width:${{Math.max(3, item.share * 100)}}%"></div></div></div>`).join("")}}
+      `;
+    }}
+
+    function renderFramework() {{
+      document.getElementById("frameworkList").innerHTML = DATA.framework.map(item => `
+        <div class="framework-item">
+          <h3>${{esc(item.term)}}</h3>
+          <p>${{esc(item.meaning || "")}}</p>
+          <p class="speech-meta">${{esc(item.components || "")}}</p>
+        </div>
+      `).join("");
+    }}
+
+    function renderSpeechList(rows) {{
+      const totalPages = Math.max(1, Math.ceil(rows.length / state.pageSize));
+      state.page = Math.min(state.page, totalPages);
+      const start = (state.page - 1) * state.pageSize;
+      const pageRows = rows.slice(start, start + state.pageSize);
+      document.getElementById("tableStatus").textContent = `${{fmt.format(rows.length)}} matching speeches | Page ${{state.page}} of ${{totalPages}}`;
+      document.getElementById("speechList").innerHTML = pageRows.map(row => `
+        <article class="speech-card">
+          <strong>${{esc(row.no)}}. ${{esc(row.event)}}</strong>
+          <div class="speech-meta">${{esc(row.date)}} | ${{esc(row.language)}} | ${{esc(row.interactionType)}} | ${{fmt.format(row.wordCount)}} words</div>
+          <div class="speech-meta">${{esc(row.fieldDomain)}}</div>
+        </article>
+      `).join("") || `<p class="speech-meta">No matching speeches.</p>`;
+      document.getElementById("prevPage").disabled = state.page <= 1;
+      document.getElementById("nextPage").disabled = state.page >= totalPages;
+    }}
+
+    function bindNav() {{
+      document.querySelectorAll(".mobile-nav button").forEach(button => button.addEventListener("click", () => {{
+        state.view = button.dataset.view;
+        document.querySelectorAll(".mobile-nav button").forEach(item => item.classList.toggle("active", item === button));
+        document.querySelectorAll(".view").forEach(view => view.classList.toggle("active", view.id === state.view));
+      }}));
+      document.getElementById("prevPage").addEventListener("click", () => {{
+        state.page = Math.max(1, state.page - 1);
+        render();
+      }});
+      document.getElementById("nextPage").addEventListener("click", () => {{
+        state.page += 1;
+        render();
+      }});
+    }}
+
+    function render() {{
+      const rows = filteredRows();
+      renderKpis(rows);
+      renderLanguage(rows);
+      renderTimeline(rows);
+      renderBars("interactionChart", rows, "interactionType");
+      renderBars("domainChart", rows, "fieldDomain", "indigo");
+      renderHeatmap(rows);
+      renderSummary();
+      renderFramework();
+      renderSpeechList(rows);
+    }}
+
+    initFilters();
+    bindNav();
+    syncFilterInputs();
+    render();
+  </script>
+</body>
+</html>
+"""
+
+
 def main() -> None:
     analysis_rows = normalize_analysis(sheet_rows(DISCOURSE_XLSX, "Analysis Table", header_row=1))
     data = {
@@ -1458,7 +2250,10 @@ def main() -> None:
     }
     OUT_DIR.mkdir(exist_ok=True)
     OUT_FILE.write_text(build_html(data), encoding="utf-8")
+    MOBILE_OUT_DIR.mkdir(exist_ok=True)
+    MOBILE_OUT_FILE.write_text(build_mobile_html(data), encoding="utf-8")
     print(OUT_FILE)
+    print(MOBILE_OUT_FILE)
 
 
 if __name__ == "__main__":

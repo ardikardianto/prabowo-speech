@@ -3,9 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta http-equiv="refresh" content="0; url=interactive_dashboard/index.html" />
   <title>Prabowo Speeches Discourse Dashboard</title>
-  <link rel="canonical" href="interactive_dashboard/index.html" />
   <style>
     body {
       margin: 0;
@@ -22,10 +20,18 @@
       font-weight: 700;
     }
   </style>
+  <script>
+    const target = window.matchMedia("(max-width: 760px)").matches
+      ? "mobile_dashboard/index.html"
+      : "interactive_dashboard/index.html";
+    window.location.replace(target);
+  </script>
 </head>
 <body>
   <main>
-    Opening the dashboard. <a href="interactive_dashboard/index.html">Open manually</a>.
+    Opening the dashboard.
+    <a href="mobile_dashboard/index.html">Mobile version</a> |
+    <a href="interactive_dashboard/index.html">Desktop version</a>
   </main>
 </body>
 </html>
