@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1180" viewBox="0 0 1500 1180">
+<rect width="100%" height="100%" fill="#FFFFFF"/>
+<text x="70" y="58" font-size="34" font-weight="800" fill="#17365D">Visual Mapping of Prabowo Speeches</text>
+<text x="70" y="88" font-size="17" fill="#4F5D6B">Counts derived from the Analysis Table in the discourse situational context workbook; total corpus = 169 speeches.</text>
+<rect x="70" y="125" width="650" height="432" rx="12" fill="#F8FBFD" stroke="#B7C9D8"/>
+<text x="98" y="167" font-size="26" font-weight="700" fill="#17365D">1) Interaction Types</text>
+<text x="98" y="195" font-size="15" fill="#4F5D6B">Distribution by discourse activity/genre</text>
+<text x="98" y="227" font-size="15" font-weight="600" fill="#1F1F1F">Presidential address</text>
+<rect x="98" y="235" width="470" height="34" rx="7" fill="#E7EEF5"/>
+<rect x="98" y="235" width="470" height="34" rx="7" fill="#1F4E79"/>
+<text x="580" y="258" font-size="16" font-weight="700" fill="#17365D">49</text>
+<text x="630" y="258" font-size="14" fill="#596773">29.0%</text>
+<text x="98" y="279" font-size="15" font-weight="600" fill="#1F1F1F">Ceremonial / policy address</text>
+<rect x="98" y="287" width="470" height="34" rx="7" fill="#E7EEF5"/>
+<rect x="98" y="287" width="422" height="34" rx="7" fill="#376F9F"/>
+<text x="532" y="310" font-size="16" font-weight="700" fill="#17365D">44</text>
+<text x="630" y="310" font-size="14" fill="#596773">26.0%</text>
+<text x="98" y="331" font-size="15" font-weight="600" fill="#1F1F1F">Press statement / media Q&amp;A</text>
+<rect x="98" y="339" width="470" height="34" rx="7" fill="#E7EEF5"/>
+<rect x="98" y="339" width="422" height="34" rx="7" fill="#5B9BD5"/>
+<text x="532" y="362" font-size="16" font-weight="700" fill="#17365D">44</text>
+<text x="630" y="362" font-size="14" fill="#596773">26.0%</text>
+<text x="98" y="383" font-size="15" font-weight="600" fill="#1F1F1F">Diplomatic exchange / joint statement</text>
+<rect x="98" y="391" width="470" height="34" rx="7" fill="#E7EEF5"/>
+<rect x="98" y="391" width="191" height="34" rx="7" fill="#70AD47"/>
+<text x="301" y="414" font-size="16" font-weight="700" fill="#17365D">20</text>
+<text x="630" y="414" font-size="14" fill="#596773">11.8%</text>
+<text x="98" y="435" font-size="15" font-weight="600" fill="#1F1F1F">Cabinet/executive briefing</text>
+<rect x="98" y="443" width="470" height="34" rx="7" fill="#E7EEF5"/>
+<rect x="98" y="443" width="86" height="34" rx="7" fill="#A9D18E"/>
+<text x="196" y="466" font-size="16" font-weight="700" fill="#17365D">9</text>
+<text x="630" y="466" font-size="14" fill="#596773">5.3%</text>
+<text x="98" y="487" font-size="15" font-weight="600" fill="#1F1F1F">Public greeting / condolence</text>
+<rect x="98" y="495" width="470" height="34" rx="7" fill="#E7EEF5"/>
+<rect x="98" y="495" width="28" height="34" rx="7" fill="#FFC000"/>
+<text x="138" y="518" font-size="16" font-weight="700" fill="#17365D">3</text>
+<text x="630" y="518" font-size="14" fill="#596773">1.8%</text>
+<rect x="790" y="125" width="650" height="692" rx="12" fill="#F8FBFD" stroke="#B7C9D8"/>
+<text x="818" y="167" font-size="26" font-weight="700" fill="#17365D">2) Field Domains</text>
+<text x="818" y="195" font-size="15" fill="#4F5D6B">Distribution by situational field/topic domain</text>
+<text x="818" y="227" font-size="15" font-weight="600" fill="#1F1F1F">International diplomacy and strategic partnership</text>
+<rect x="818" y="235" width="470" height="34" rx="7" fill="#E7EEF5"/>
+<rect x="818" y="235" width="470" height="34" rx="7" fill="#1F4E79"/>
+<text x="1300" y="258" font-size="16" font-weight="700" fill="#17365D">68</text>
+<text x="1350" y="258" font-size="14" fill="#596773">40.2%</text>
+<text x="818" y="279" font-size="15" font-weight="600" fill="#1F1F1F">Economy, investment, and business</text>
+<rect x="818" y="287" width="470" height="34" rx="7" fill="#E7EEF5"/>
+<rect x="818" y="287" width="172" height="34" rx="7" fill="#376F9F"/>
+<text x="1002" y="310" font-size="16" font-weight="700" fill="#17365D">25</text>
+<text x="1350" y="310" font-size="14" fill="#596773">14.8%</text>
+<text x="818" y="331" font-size="15" font-weight="600" fill="#1F1F1F">Cabinet and executive governance</text>
+<rect x="818" y="339" width="470" height="34" rx="7" fill="#E7EEF5"/>
+<rect x="818" y="339" width="103" height="34" rx="7" fill="#5B9BD5"/>
+<text x="933" y="362" font-size="16" font-weight="700" fill="#17365D">15</text>
+<text x="1350" y="362" font-size="14" fill="#596773">8.9%</text>
+<text x="818" y="383" font-size="15" font-weight="600" fill="#1F1F1F">Defence, security, law, and public order</text>
+<rect x="818" y="391" width="470" height="34" rx="7" fill="#E7EEF5"/>
+<rect x="818" y="391" width="103" height="34" rx="7" fill="#70AD47"/>
+<text x="933" y="414" font-size="16" font-weight="700" fill="#17365D">15</text>
+<text x="1350" y="414" font-size="14" fill="#596773">8.9%</text>
+<text x="818" y="435" font-size="15" font-weight="600" fill="#1F1F1F">Religious, cultural, and social solidarity</text>
+<rect x="818" y="443" width="470" height="34" rx="7" fill="#E7EEF5"/>
+<rect x="818" y="443" width="96" height="34" rx="7" fill="#A9D18E"/>
+<text x="926" y="466" font-size="16" font-weight="700" fill="#17365D">14</text>
+<text x="1350" y="466" font-size="14" fill="#596773">8.3%</text>
+<text x="818" y="487" font-size="15" font-weight="600" fill="#1F1F1F">Infrastructure, energy, and natural resources</text>
+<rect x="818" y="495" width="470" height="34" rx="7" fill="#E7EEF5"/>
+<rect x="818" y="495" width="69" height="34" rx="7" fill="#FFC000"/>
+<text x="899" y="518" font-size="16" font-weight="700" fill="#17365D">10</text>
+<text x="1350" y="518" font-size="14" fill="#596773">5.9%</text>
+<text x="818" y="539" font-size="15" font-weight="600" fill="#1F1F1F">Education and human-capital development</text>
+<rect x="818" y="547" width="470" height="34" rx="7" fill="#E7EEF5"/>
+<rect x="818" y="547" width="62" height="34" rx="7" fill="#ED7D31"/>
+<text x="892" y="570" font-size="16" font-weight="700" fill="#17365D">9</text>
+<text x="1350" y="570" font-size="14" fill="#596773">5.3%</text>
+<text x="818" y="591" font-size="15" font-weight="600" fill="#1F1F1F">Health and public service</text>
+<rect x="818" y="599" width="470" height="34" rx="7" fill="#E7EEF5"/>
+<rect x="818" y="599" width="34" height="34" rx="7" fill="#C55A11"/>
+<text x="864" y="622" font-size="16" font-weight="700" fill="#17365D">5</text>
+<text x="1350" y="622" font-size="14" fill="#596773">3.0%</text>
+<text x="818" y="643" font-size="15" font-weight="600" fill="#1F1F1F">Food security, agriculture, and rural development</text>
+<rect x="818" y="651" width="470" height="34" rx="7" fill="#E7EEF5"/>
+<rect x="818" y="651" width="20" height="34" rx="7" fill="#7030A0"/>
+<text x="850" y="674" font-size="16" font-weight="700" fill="#17365D">3</text>
+<text x="1350" y="674" font-size="14" fill="#596773">1.8%</text>
+<text x="818" y="695" font-size="15" font-weight="600" fill="#1F1F1F">General presidential communication</text>
+<rect x="818" y="703" width="470" height="34" rx="7" fill="#E7EEF5"/>
+<rect x="818" y="703" width="20" height="34" rx="7" fill="#A64D79"/>
+<text x="850" y="726" font-size="16" font-weight="700" fill="#17365D">3</text>
+<text x="1350" y="726" font-size="14" fill="#596773">1.8%</text>
+<text x="818" y="747" font-size="15" font-weight="600" fill="#1F1F1F">Sport, youth, and national morale</text>
+<rect x="818" y="755" width="470" height="34" rx="7" fill="#E7EEF5"/>
+<rect x="818" y="755" width="13" height="34" rx="7" fill="#7F7F7F"/>
+<text x="843" y="778" font-size="16" font-weight="700" fill="#17365D">2</text>
+<text x="1350" y="778" font-size="14" fill="#596773">1.2%</text>
+<text x="70" y="1140" font-size="13" fill="#6B7280">Framework reference: field, tenor, and mode as situational context components, following Riyanto & Ardianto (2024).</text>
+</svg>
