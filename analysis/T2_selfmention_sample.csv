@@ -1,0 +1,12 @@
+sample,running_words,form,raw,per_1000w,pct_of_selfmention,median_per_text,SD_per_text
+"Domestic sample (BI, n=29)",78413,saya,2228,28.41,38.9,30.1,11.19
+"Domestic sample (BI, n=29)",78413,kami,81,1.03,1.4,0.42,2.06
+"Domestic sample (BI, n=29)",78413,kita,3416,43.56,59.7,45.51,13.43
+"Domestic sample (BI, n=29)",78413,TOTAL,5725,73.01,100.0,,
+"International sample (EN, n=13)",15031,I,290,19.29,26.8,20.83,10.75
+"International sample (EN, n=13)",15031,me,28,1.86,2.6,1.58,1.24
+"International sample (EN, n=13)",15031,my,97,6.45,9.0,6.06,3.76
+"International sample (EN, n=13)",15031,we,458,30.47,42.4,30.81,12.19
+"International sample (EN, n=13)",15031,us,56,3.73,5.2,3.14,4.76
+"International sample (EN, n=13)",15031,our,152,10.11,14.1,11.61,4.84
+"International sample (EN, n=13)",15031,TOTAL,1081,71.92,100.0,,

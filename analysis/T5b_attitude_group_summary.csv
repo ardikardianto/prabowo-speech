@@ -1,0 +1,6 @@
+sample,pronoun_node,AFF_pct,JUD_pct,APP_pct,JUD_propriety_pct,JUD_capacity_pct,JUD_tenacity_pct,AFF_happiness_pct,attitude_per_1000w,nodes
+Domestic (BI),saya,46.5,47.8,5.7,15.9,10.4,15.5,27.7,11.49,2228
+Domestic (BI),kami,26.4,71.7,1.9,11.3,3.8,45.3,9.4,0.68,81
+Domestic (BI),kita,20.8,74.9,4.3,37.5,17.6,16.4,10.4,23.07,3416
+International (EN),I/me/my,35.2,52.7,12.1,25.3,16.5,9.9,23.1,6.05,415
+International (EN),we/us/our,17.6,73.8,8.6,35.7,18.1,19.0,8.1,14.7,666

@@ -1,0 +1,6 @@
+sample,pronoun_node,nodes,hedges,boosters,hedges_per1k,boosters_per1k,hedge_booster_ratio,running_words
+Domestic (BI),saya,2228,251,305,3.2,3.89,0.82,78413
+Domestic (BI),kami,81,2,14,0.03,0.18,0.14,78413
+Domestic (BI),kita,3416,150,351,1.91,4.48,0.43,78413
+International (EN),I/me/my,415,96,45,6.39,2.99,2.13,15031
+International (EN),we/us/our,666,41,146,2.73,9.71,0.28,15031

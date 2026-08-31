@@ -1,0 +1,23 @@
+sample,frame,raw,per_1000w,running_words
+Domestic (BI),saya harus,17,0.22,78413
+Domestic (BI),kita harus,244,3.11,78413
+Domestic (BI),kami harus,0,0.0,78413
+Domestic (BI),saya akan,30,0.38,78413
+Domestic (BI),kita akan,173,2.21,78413
+Domestic (BI),saya kira,138,1.76,78413
+Domestic (BI),saya yakin,25,0.32,78413
+Domestic (BI),saya percaya,38,0.48,78413
+Domestic (BI),saya hormati,132,1.68,78413
+Domestic (BI),mari kita,32,0.41,78413
+Domestic (BI),marilah kita,37,0.47,78413
+Domestic (BI),kita bersyukur,29,0.37,78413
+Domestic (BI),kita sendiri,38,0.48,78413
+International (EN),i think,70,4.66,15031
+International (EN),i believe,5,0.33,15031
+International (EN),i would,21,1.4,15031
+International (EN),we must,30,2.0,15031
+International (EN),we will,38,2.53,15031
+International (EN),we need,7,0.47,15031
+International (EN),we can,17,1.13,15031
+International (EN),we have,81,5.39,15031
+International (EN),we are,84,5.59,15031

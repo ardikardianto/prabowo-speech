@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 import json
 from datetime import datetime
 from pathlib import Path
@@ -15,6 +16,22 @@ OUT_DIR = BASE_DIR / "interactive_dashboard"
 OUT_FILE = OUT_DIR / "index.html"
 MOBILE_OUT_DIR = BASE_DIR / "mobile_dashboard"
 MOBILE_OUT_FILE = MOBILE_OUT_DIR / "index.html"
+ANALYSIS_DIR = BASE_DIR / "analysis"
+
+ANALYSIS_TABLE_TITLES = {
+    "T0_per_speech_master": "Per-Speech Master",
+    "T1_selfmention_full_corpus": "Self-Mention: Full Corpus",
+    "T1b_selfmention_EXCLUSIONS_APPLIED": "Self-Mention: Exclusions Applied",
+    "T2_selfmention_sample": "Self-Mention: Purposive Samples",
+    "T3_selfmention_by_field_domain": "Self-Mention by Field Domain",
+    "T4_selfmention_by_interaction_type": "Self-Mention by Interaction Type",
+    "T5_appraisal_attitude_by_pronoun": "Appraisal Attitude by Pronoun",
+    "T5b_attitude_group_summary": "Appraisal Attitude Summary",
+    "T6_engagement_hedge_booster": "Engagement: Hedges and Boosters",
+    "T7_modal_frames": "Modal Frames",
+    "T8_data_hygiene_log": "Data Hygiene Log",
+    "T9_speech_to_table_map": "Speech-to-Table Audit Map",
+}
 
 
 def cell_value(value: Any) -> Any:
@@ -23,6 +40,42 @@ def cell_value(value: Any) -> Any:
     if isinstance(value, datetime):
         return value.strftime("%Y-%m-%d")
     return value
+
+
+def csv_value(header: str, value: str) -> Any:
+    value = value.strip()
+    if not value:
+        return ""
+    if header == "id":
+        return value
+    if value in {"True", "False"}:
+        return value == "True"
+    try:
+        return float(value) if "." in value else int(value)
+    except ValueError:
+        return value
+
+
+def csv_rows(path: Path) -> list[dict[str, Any]]:
+    with path.open(newline="", encoding="utf-8-sig") as handle:
+        return [
+            {header: csv_value(header, value or "") for header, value in row.items()}
+            for row in csv.DictReader(handle)
+        ]
+
+
+def research_analysis() -> dict[str, Any]:
+    tables = {}
+    for path in sorted(ANALYSIS_DIR.glob("T*.csv")):
+        key = path.stem
+        tables[key] = {
+            "title": ANALYSIS_TABLE_TITLES.get(key, key.replace("_", " ")),
+            "source": path.name,
+            "rows": csv_rows(path),
+        }
+    sample_path = ANALYSIS_DIR / "sample_definition.json"
+    samples = json.loads(sample_path.read_text(encoding="utf-8")) if sample_path.exists() else {}
+    return {"tables": tables, "samples": samples}
 
 
 def sheet_rows(path: Path, sheet_name: str, header_row: int = 1) -> list[dict[str, Any]]:
@@ -741,6 +794,202 @@ def build_html(data: dict[str, Any]) -> str:
 
     .evidence {{ color: var(--muted); max-width: 540px; line-height: 1.5; }}
 
+    /* Linguistic analysis ------------------------------------------------ */
+    .research-head {{
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(240px, 0.5fr);
+      gap: 28px;
+      align-items: end;
+      padding: 4px 0 24px;
+      border-bottom: 2px solid var(--rule);
+      margin-bottom: 26px;
+    }}
+
+    .research-head h2 {{
+      margin: 0 0 8px;
+      font-family: var(--serif);
+      font-size: 30px;
+      font-weight: 600;
+    }}
+
+    .research-head p {{ margin: 0; color: var(--muted); line-height: 1.55; max-width: 72ch; }}
+
+    .sample-note {{
+      color: var(--ink-soft);
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.6;
+      text-align: right;
+    }}
+
+    .research-kpis {{ margin-bottom: 28px; }}
+
+    .research-nav {{
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      margin: 0 0 22px;
+      border: 1px solid var(--line-2);
+      background: var(--panel);
+    }}
+
+    .research-nav button {{
+      min-width: max-content;
+      padding: 11px 16px;
+      border: 0;
+      border-right: 1px solid var(--line);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+    }}
+
+    .research-nav button:last-child {{ border-right: 0; }}
+    .research-nav button:hover {{ color: var(--ink); background: var(--paper-2); }}
+    .research-nav button.active {{ color: var(--panel); background: var(--ink); }}
+
+    .research-panel {{ display: none; }}
+    .research-panel.active {{ display: block; }}
+
+    .analysis-grid {{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 24px;
+    }}
+
+    .analysis-grid .wide {{ grid-column: 1 / -1; }}
+
+    .rate-chart {{ display: grid; gap: 14px; }}
+
+    .rate-row {{
+      display: grid;
+      grid-template-columns: minmax(130px, 0.9fr) minmax(180px, 2fr) 84px;
+      gap: 14px;
+      align-items: center;
+      font-size: 13px;
+    }}
+
+    .rate-label strong {{ display: block; color: var(--ink); }}
+    .rate-label span {{ display: block; margin-top: 2px; color: var(--muted); font-size: 11px; }}
+    .rate-value {{ text-align: right; font-family: var(--mono); color: var(--ink-soft); }}
+
+    .grouped-track {{
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+    }}
+
+    .grouped-track .bar-track {{ height: 8px; }}
+    .bar-fill.slate {{ background: var(--slate); }}
+    .bar-fill.ochre {{ background: var(--ochre); }}
+
+    .analysis-legend {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 16px;
+      color: var(--muted);
+      font-size: 12px;
+    }}
+
+    .analysis-legend span {{ display: inline-flex; gap: 7px; align-items: center; }}
+
+    .attitude-row {{ margin: 17px 0; }}
+    .attitude-row-head {{ display: flex; justify-content: space-between; gap: 12px; margin-bottom: 7px; font-size: 13px; }}
+    .attitude-row-head span {{ color: var(--muted); font-family: var(--mono); }}
+
+    .stacked-bar {{
+      display: flex;
+      width: 100%;
+      height: 14px;
+      overflow: hidden;
+      background: var(--paper-2);
+    }}
+
+    .stacked-bar i {{ display: block; height: 100%; }}
+
+    .finding {{
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+      color: var(--ink-soft);
+      font-size: 13px;
+      line-height: 1.5;
+    }}
+
+    .finding:last-child {{ border-bottom: 0; }}
+    .finding strong {{ color: var(--accent); font-family: var(--serif); font-size: 22px; margin-right: 8px; }}
+
+    .source-toolbar {{
+      display: grid;
+      grid-template-columns: minmax(240px, 0.7fr) minmax(240px, 1fr) auto;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 12px;
+    }}
+
+    .source-meta {{ color: var(--muted); font-size: 12px; margin: 0 0 14px; }}
+    .source-table th {{ white-space: nowrap; }}
+    .source-table td {{ max-width: 360px; overflow-wrap: anywhere; }}
+    .source-table td.numeric {{ text-align: right; font-family: var(--mono); }}
+
+    .master-table {{
+      min-width: 3380px;
+      table-layout: fixed;
+    }}
+
+    .master-table th,
+    .master-table td {{
+      max-width: none;
+      white-space: nowrap;
+    }}
+
+    .master-table .master-groups th {{
+      top: 0;
+      height: 34px;
+      padding: 8px 12px;
+      color: var(--panel);
+      background: var(--ink);
+      border-right: 1px solid var(--ink-soft);
+      border-bottom: 0;
+      cursor: default;
+      text-align: center;
+      letter-spacing: 0.09em;
+    }}
+
+    .master-table .master-groups th:first-child {{
+      position: sticky;
+      left: 0;
+      z-index: 6;
+    }}
+
+    .master-table thead tr:nth-child(2) th {{ top: 34px; }}
+
+    .master-table col:nth-child(1) {{ width: 62px; }}
+    .master-table col:nth-child(2) {{ width: 112px; }}
+    .master-table col:nth-child(3) {{ width: 150px; }}
+    .master-table col:nth-child(4) {{ width: 245px; }}
+    .master-table col:nth-child(5) {{ width: 330px; }}
+    .master-table col:nth-child(n+6):nth-child(-n+24) {{ width: 103px; }}
+    .master-table th:nth-child(5), .master-table td:nth-child(5) {{ white-space: normal; }}
+    .master-table th:nth-child(9), .master-table td:nth-child(9),
+    .master-table th:nth-child(10), .master-table td:nth-child(10) {{ text-align: center; }}
+    .master-table col:nth-child(25) {{ width: 520px; }}
+    .master-table th:nth-child(25), .master-table td:nth-child(25) {{ white-space: normal; }}
+
+    .master-table thead tr:nth-child(2) th:nth-child(-n+3),
+    .master-table tbody td:nth-child(-n+3) {{
+      position: sticky;
+      z-index: 2;
+      background: var(--panel);
+    }}
+
+    .master-table thead tr:nth-child(2) th:nth-child(-n+3) {{ z-index: 5; background: var(--paper-2); }}
+    .master-table th:nth-child(1), .master-table td:nth-child(1) {{ left: 0; }}
+    .master-table th:nth-child(2), .master-table td:nth-child(2) {{ left: 62px; }}
+    .master-table th:nth-child(3), .master-table td:nth-child(3) {{ left: 174px; box-shadow: 6px 0 8px -8px rgba(27, 26, 22, 0.65); }}
+    .master-table tbody tr:hover td:nth-child(-n+3) {{ background: var(--paper-2); }}
+
     .empty {{
       padding: 32px;
       color: var(--muted);
@@ -751,7 +1000,7 @@ def build_html(data: dict[str, Any]) -> str:
     }}
 
     @media (max-width: 1100px) {{
-      .masthead, .grid-2, .grid-3, .filter-grid, .summary-cards {{
+      .masthead, .grid-2, .grid-3, .filter-grid, .summary-cards, .research-head, .source-toolbar {{
         grid-template-columns: 1fr;
       }}
       .source-stack {{ align-items: flex-start; max-width: none; }}
@@ -768,6 +1017,7 @@ def build_html(data: dict[str, Any]) -> str:
       }}
       .framework-grid {{ grid-template-columns: 1fr; }}
       .donut-wrap {{ grid-template-columns: 1fr; }}
+      .sample-note {{ text-align: left; }}
     }}
 
     @media (max-width: 640px) {{
@@ -778,6 +1028,10 @@ def build_html(data: dict[str, Any]) -> str:
       .summary-row {{ grid-template-columns: 1fr; }}
       .visual-map .bar-row {{ grid-template-columns: 1fr; }}
       .visual-map .bar-value {{ text-align: left; }}
+      .analysis-grid {{ grid-template-columns: 1fr; }}
+      .analysis-grid .wide {{ grid-column: auto; }}
+      .rate-row {{ grid-template-columns: 1fr; gap: 6px; }}
+      .rate-value {{ text-align: left; }}
     }}
   
 </style>
@@ -789,11 +1043,12 @@ def build_html(data: dict[str, Any]) -> str:
         <div>
           <p class="hero-kicker">Situational Context Analysis</p>
           <h1>Prabowo Speeches Discourse Dashboard</h1>
-          <p class="subtitle">Interactive view of the situational context framework, summary counts, visual mapping counts, and the full analysis table across 169 speech transcripts.</p>
+          <p class="subtitle">Explore situational context across 169 speech transcripts, then move into self-mention, appraisal, engagement, modal framing, and the underlying research tables.</p>
         </div>
         <div class="source-stack">
           <span class="pill">Discourse workbook: Framework, Summary, Analysis Table</span>
           <span class="pill">Visual mapping workbook: Interaction Types and Field Domains</span>
+          <span class="pill">Analysis folder: Linguistic patterns and data audit</span>
         </div>
       </div>
       <nav class="tabs" aria-label="Dashboard views">
@@ -801,6 +1056,7 @@ def build_html(data: dict[str, Any]) -> str:
         <button class="tab-btn" data-view="framework">Framework</button>
         <button class="tab-btn" data-view="summary">Summary</button>
         <button class="tab-btn" data-view="analysis">Analysis Table</button>
+        <button class="tab-btn" data-view="linguistic">Linguistic Analysis</button>
       </nav>
     </div>
   </header>
@@ -903,6 +1159,31 @@ def build_html(data: dict[str, Any]) -> str:
         </table>
       </div>
     </section>
+
+    <section id="linguistic" class="view">
+      <div class="research-head">
+        <div>
+          <h2>Linguistic Analysis</h2>
+          <p>Explore how Prabowo positions self and collective voice through pronouns, appraisal, engagement, and modal framing. Rates are normalized per 1,000 presidential words unless shown as percentages.</p>
+        </div>
+        <div class="sample-note" id="researchSampleNote"></div>
+      </div>
+      <div class="kpi-grid research-kpis" id="researchKpis"></div>
+      <nav class="research-nav" aria-label="Linguistic analysis views">
+        <button class="active" data-research-view="selfmention">Self-Mention</button>
+        <button data-research-view="appraisal">Appraisal</button>
+        <button data-research-view="engagement">Engagement</button>
+        <button data-research-view="modal">Modal Frames</button>
+        <button data-research-view="quality">Data Quality</button>
+        <button data-research-view="sources">Source Tables</button>
+      </nav>
+      <section id="research-selfmention" class="research-panel active"></section>
+      <section id="research-appraisal" class="research-panel"></section>
+      <section id="research-engagement" class="research-panel"></section>
+      <section id="research-modal" class="research-panel"></section>
+      <section id="research-quality" class="research-panel"></section>
+      <section id="research-sources" class="research-panel"></section>
+    </section>
   </main>
 
   <script>
@@ -917,6 +1198,9 @@ def build_html(data: dict[str, Any]) -> str:
       domain: "All field domains",
       sortKey: "date",
       sortDir: "asc",
+      researchView: "selfmention",
+      researchTable: "T0_per_speech_master",
+      researchSearch: "",
       frameworkTerm: "Field",
       summarySort: {{
         corpus: {{ key: "order", dir: "asc" }},
@@ -1252,6 +1536,234 @@ def build_html(data: dict[str, Any]) -> str:
       `).join("");
     }}
 
+    function researchRows(key) {{
+      return DATA.research?.tables?.[key]?.rows || [];
+    }}
+
+    function formatMetric(value, digits = 2) {{
+      const number = Number(value);
+      if (!Number.isFinite(number)) return esc(value);
+      return number.toLocaleString("en-US", {{ maximumFractionDigits: digits }});
+    }}
+
+    function renderResearchKpis() {{
+      const full = researchRows("T1b_selfmention_EXCLUSIONS_APPLIED");
+      const fullTotals = full.filter(row => row.form === "TOTAL");
+      const sample = researchRows("T2_selfmention_sample");
+      const sampleTotals = sample.filter(row => row.form === "TOTAL");
+      const hygiene = researchRows("T8_data_hygiene_log").filter(row => Number(row.words_removed) > 0);
+      const corpusTexts = fullTotals.reduce((sum, row) => sum + (Number(row.texts) || 0), 0);
+      const corpusWords = fullTotals.reduce((sum, row) => sum + (Number(row.running_words) || 0), 0);
+      const sampleWords = sampleTotals.reduce((sum, row) => sum + (Number(row.running_words) || 0), 0);
+      const removedWords = hygiene.reduce((sum, row) => sum + (Number(row.words_removed) || 0), 0);
+      const kpis = [
+        {{ label: "Clean Analysis Corpus", value: fmt.format(corpusTexts), note: `${{fmt.format(corpusWords)}} words after exclusions` }},
+        {{ label: "Purposive Sample", value: fmt.format((DATA.research.samples.domestic || []).length + (DATA.research.samples.international || []).length), note: `${{fmt.format(sampleWords)}} words across two samples` }},
+        {{ label: "Analysis Tables", value: fmt.format(Object.keys(DATA.research.tables).length), note: "All available in Source Tables" }},
+        {{ label: "Cleaned Transcripts", value: fmt.format(hygiene.length), note: `${{fmt.format(removedWords)}} non-Prabowo words removed` }},
+        {{ label: "Sample Exclusions", value: fmt.format(Object.keys(DATA.research.samples.excluded || {{}}).length), note: "Duplicate or translated speeches" }}
+      ];
+      document.getElementById("researchKpis").innerHTML = kpis.map(kpi => `
+        <article class="kpi">
+          <div class="kpi-label">${{esc(kpi.label)}}</div>
+          <div class="kpi-value">${{esc(kpi.value)}}</div>
+          <div class="kpi-note">${{esc(kpi.note)}}</div>
+        </article>
+      `).join("");
+      document.getElementById("researchSampleNote").innerHTML = `Domestic sample: <strong>${{(DATA.research.samples.domestic || []).length}} speeches</strong><br>International sample: <strong>${{(DATA.research.samples.international || []).length}} speeches</strong>`;
+    }}
+
+    function rateRows(rows, valueKey = "per_1000w", colorClass = "") {{
+      const max = Math.max(...rows.map(row => Number(row[valueKey]) || 0), 1);
+      return `<div class="rate-chart">${{rows.map(row => `
+        <div class="rate-row">
+          <div class="rate-label"><strong>${{esc(row.form || row.frame || row.pronoun_node)}}</strong><span>${{fmt.format(Number(row.raw) || Number(row.nodes) || 0)}} raw</span></div>
+          <div class="bar-track"><div class="bar-fill ${{colorClass}}" style="width:${{Math.max(2, (Number(row[valueKey]) || 0) / max * 100)}}%"></div></div>
+          <div class="rate-value">${{formatMetric(row[valueKey])}} / 1k</div>
+        </div>
+      `).join("")}}</div>`;
+    }}
+
+    function renderSelfMention() {{
+      const rows = researchRows("T2_selfmention_sample").filter(row => row.form !== "TOTAL");
+      const domestic = rows.filter(row => String(row.sample).startsWith("Domestic"));
+      const international = rows.filter(row => String(row.sample).startsWith("International"));
+      const sumRate = (items, forms) => items.filter(row => forms.includes(row.form)).reduce((sum, row) => sum + (Number(row.per_1000w) || 0), 0);
+      const domesticCollective = sumRate(domestic, ["kami", "kita"]);
+      const domesticSingular = sumRate(domestic, ["saya"]);
+      const internationalCollective = sumRate(international, ["we", "us", "our"]);
+      const internationalSingular = sumRate(international, ["I", "me", "my"]);
+      document.getElementById("research-selfmention").innerHTML = `
+        <div class="analysis-grid">
+          <section class="panel">
+            <h2>Domestic Sample</h2>
+            <p class="panel-caption">Bahasa Indonesia, n=${{DATA.research.samples.domestic.length}}. Pronoun frequency per 1,000 words.</p>
+            ${{rateRows(domestic, "per_1000w", "coral")}}
+          </section>
+          <section class="panel">
+            <h2>International Sample</h2>
+            <p class="panel-caption">English, n=${{DATA.research.samples.international.length}}. Pronoun frequency per 1,000 words.</p>
+            ${{rateRows(international, "per_1000w", "slate")}}
+          </section>
+          <section class="panel wide">
+            <h2>Collective vs. Singular Voice</h2>
+            <div class="grid-2">
+              <div class="finding"><strong>${{formatMetric(domesticCollective)}}</strong> collective mentions per 1,000 words (<em>kami + kita</em>), compared with ${{formatMetric(domesticSingular)}} for <em>saya</em>.</div>
+              <div class="finding"><strong>${{formatMetric(internationalCollective)}}</strong> collective mentions per 1,000 words (<em>we + us + our</em>), compared with ${{formatMetric(internationalSingular)}} for <em>I + me + my</em>.</div>
+            </div>
+          </section>
+        </div>`;
+    }}
+
+    function renderAppraisal() {{
+      const rows = researchRows("T5b_attitude_group_summary");
+      const palette = {{ AFF_pct: "var(--accent)", JUD_pct: "var(--slate)", APP_pct: "var(--ochre)" }};
+      document.getElementById("research-appraisal").innerHTML = `
+        <div class="analysis-grid">
+          <section class="panel wide">
+            <h2>Attitude Group Profile</h2>
+            <p class="panel-caption">Share of coded attitude surrounding each pronoun node.</p>
+            <div class="analysis-legend"><span><i class="swatch" style="background:${{palette.AFF_pct}}"></i>Affect</span><span><i class="swatch" style="background:${{palette.JUD_pct}}"></i>Judgement</span><span><i class="swatch" style="background:${{palette.APP_pct}}"></i>Appreciation</span></div>
+            ${{rows.map(row => `
+              <div class="attitude-row">
+                <div class="attitude-row-head"><strong>${{esc(row.sample)}} · ${{esc(row.pronoun_node)}}</strong><span>${{formatMetric(row.attitude_per_1000w)}} / 1k · ${{fmt.format(row.nodes)}} nodes</span></div>
+                <div class="stacked-bar" title="Affect ${{row.AFF_pct}}%, Judgement ${{row.JUD_pct}}%, Appreciation ${{row.APP_pct}}%">
+                  <i style="width:${{row.AFF_pct}}%;background:${{palette.AFF_pct}}"></i><i style="width:${{row.JUD_pct}}%;background:${{palette.JUD_pct}}"></i><i style="width:${{row.APP_pct}}%;background:${{palette.APP_pct}}"></i>
+                </div>
+              </div>`).join("")}}
+          </section>
+          <section class="panel">
+            <h2>Dominant Attitude</h2>
+            ${{rows.map(row => {{
+              const groups = [["Affect", Number(row.AFF_pct)], ["Judgement", Number(row.JUD_pct)], ["Appreciation", Number(row.APP_pct)]].sort((a, b) => b[1] - a[1]);
+              return `<div class="finding"><strong>${{formatMetric(groups[0][1], 1)}}%</strong>${{esc(row.sample)}} · ${{esc(row.pronoun_node)}} is led by ${{groups[0][0].toLowerCase()}}.</div>`;
+            }}).join("")}}
+          </section>
+          <section class="panel">
+            <h2>Highest Attitude Density</h2>
+            ${{[...rows].sort((a, b) => Number(b.attitude_per_1000w) - Number(a.attitude_per_1000w)).map(row => `<div class="finding"><strong>${{formatMetric(row.attitude_per_1000w)}}</strong>${{esc(row.sample)}} · ${{esc(row.pronoun_node)}} per 1,000 words.</div>`).join("")}}
+          </section>
+        </div>`;
+    }}
+
+    function renderEngagement() {{
+      const rows = researchRows("T6_engagement_hedge_booster");
+      const max = Math.max(...rows.flatMap(row => [Number(row.hedges_per1k), Number(row.boosters_per1k)]), 1);
+      document.getElementById("research-engagement").innerHTML = `
+        <div class="analysis-grid">
+          <section class="panel wide">
+            <h2>Hedges and Boosters</h2>
+            <p class="panel-caption">Normalized frequencies around each pronoun node.</p>
+            <div class="analysis-legend"><span><i class="swatch" style="background:var(--ochre)"></i>Hedges</span><span><i class="swatch" style="background:var(--slate)"></i>Boosters</span></div>
+            <div class="rate-chart">${{rows.map(row => `
+              <div class="rate-row">
+                <div class="rate-label"><strong>${{esc(row.sample)}} · ${{esc(row.pronoun_node)}}</strong><span>ratio ${{formatMetric(row.hedge_booster_ratio)}}</span></div>
+                <div class="grouped-track">
+                  <div class="bar-track" title="Hedges: ${{row.hedges_per1k}} per 1,000"><div class="bar-fill ochre" style="width:${{Math.max(2, Number(row.hedges_per1k) / max * 100)}}%"></div></div>
+                  <div class="bar-track" title="Boosters: ${{row.boosters_per1k}} per 1,000"><div class="bar-fill slate" style="width:${{Math.max(2, Number(row.boosters_per1k) / max * 100)}}%"></div></div>
+                </div>
+                <div class="rate-value">${{formatMetric(row.hedges_per1k)}} / ${{formatMetric(row.boosters_per1k)}}</div>
+              </div>`).join("")}}</div>
+          </section>
+          <section class="panel wide">
+            <h2>Engagement Balance</h2>
+            <div class="grid-2">
+              ${{rows.map(row => `<div class="finding"><strong>${{Number(row.hedge_booster_ratio) > 1 ? "H" : "B"}}</strong>${{esc(row.sample)}} · ${{esc(row.pronoun_node)}} is ${{Number(row.hedge_booster_ratio) > 1 ? "hedge-led" : "booster-led"}} (ratio ${{formatMetric(row.hedge_booster_ratio)}}).</div>`).join("")}}
+            </div>
+          </section>
+        </div>`;
+    }}
+
+    function renderModalFrames() {{
+      const rows = researchRows("T7_modal_frames");
+      const panel = (title, items, color) => `
+        <section class="panel"><h2>${{title}}</h2><p class="panel-caption">Top frames by normalized frequency.</p>${{rateRows([...items].sort((a, b) => Number(b.per_1000w) - Number(a.per_1000w)).slice(0, 10), "per_1000w", color)}}</section>`;
+      document.getElementById("research-modal").innerHTML = `<div class="analysis-grid">${{panel("Domestic Modal Frames", rows.filter(row => String(row.sample).startsWith("Domestic")), "coral")}}${{panel("International Modal Frames", rows.filter(row => String(row.sample).startsWith("International")), "slate")}}</div>`;
+    }}
+
+    function renderQuality() {{
+      const rows = researchRows("T8_data_hygiene_log");
+      const cleaned = rows.filter(row => Number(row.words_removed) > 0);
+      const removed = cleaned.reduce((sum, row) => sum + Number(row.words_removed), 0);
+      const raw = cleaned.reduce((sum, row) => sum + Number(row.raw_words), 0);
+      const exclusions = Object.entries(DATA.research.samples.excluded || {{}});
+      const top = [...cleaned].sort((a, b) => Number(b.pct_removed) - Number(a.pct_removed)).slice(0, 10);
+      document.getElementById("research-quality").innerHTML = `
+        <div class="analysis-grid">
+          <section class="panel">
+            <h2>Speaker-Turn Cleaning</h2>
+            <div class="finding"><strong>${{fmt.format(cleaned.length)}}</strong>multi-speaker transcripts cleaned.</div>
+            <div class="finding"><strong>${{fmt.format(removed)}}</strong>non-Prabowo words removed.</div>
+            <div class="finding"><strong>${{pct(removed / Math.max(raw, 1))}}</strong>of words removed within affected transcripts.</div>
+          </section>
+          <section class="panel">
+            <h2>Purposive-Sample Exclusions</h2>
+            ${{exclusions.map(([id, reason]) => `<div class="finding"><strong>${{esc(id)}}</strong>${{esc(reason)}}</div>`).join("")}}
+          </section>
+          <section class="panel wide">
+            <h2>Largest Speaker-Turn Reductions</h2>
+            <div class="table-wrap" style="max-height:430px"><table class="summary-table"><thead><tr><th>Speech</th><th>Language</th><th>Presidential Words</th><th>Words Removed</th><th>Removed</th></tr></thead><tbody>${{top.map(row => `<tr><td>${{esc(row.id)}}</td><td>${{esc(row.lang)}}</td><td>${{fmt.format(row.prabowo_words)}}</td><td>${{fmt.format(row.words_removed)}}</td><td>${{formatMetric(row.pct_removed, 1)}}%</td></tr>`).join("")}}</tbody></table></div>
+          </section>
+        </div>`;
+    }}
+
+    function prettyHeader(value) {{
+      return String(value).replaceAll("_", " ").replace(/\b\w/g, char => char.toUpperCase());
+    }}
+
+    function sourceCell(value) {{
+      if (value === true) return "Yes";
+      if (value === false) return "No";
+      if (value === "" || value == null) return "—";
+      return value;
+    }}
+
+    function renderResearchSources() {{
+      const tables = DATA.research.tables;
+      const keys = Object.keys(tables);
+      if (!tables[state.researchTable]) state.researchTable = keys[0];
+      const table = tables[state.researchTable];
+      const query = state.researchSearch.toLowerCase();
+      const rows = table.rows.filter(row => !query || Object.values(row).some(value => String(value).toLowerCase().includes(query)));
+      const headers = table.rows.length ? Object.keys(table.rows[0]) : [];
+      const isMaster = state.researchTable === "T0_per_speech_master";
+      const masterGroups = isMaster ? `<tr class="master-groups"><th colspan="3">Identity</th><th colspan="2">Discourse Context</th><th colspan="3">Corpus Words</th><th colspan="2">Sample Membership</th><th colspan="9">Raw Self-Mentions</th><th colspan="5">Normalized Rate per 1,000</th><th colspan="1">Speech</th></tr>` : "";
+      const masterCols = isMaster ? `<colgroup>${{headers.map(() => "<col>").join("")}}</colgroup>` : "";
+      document.getElementById("research-sources").innerHTML = `
+        <section class="panel">
+          <h2>Source Table Explorer</h2>
+          <div class="source-toolbar">
+            <select id="researchTableSelect" aria-label="Analysis source table">${{keys.map(key => `<option value="${{esc(key)}}" ${{key === state.researchTable ? "selected" : ""}}>${{esc(tables[key].title)}}</option>`).join("")}}</select>
+            <input id="researchTableSearch" type="search" value="${{esc(state.researchSearch)}}" placeholder="Search this table" />
+            <button class="clear-btn" id="researchTableClear">Clear</button>
+          </div>
+          <p class="source-meta">${{esc(table.source)}} · ${{fmt.format(rows.length)}} of ${{fmt.format(table.rows.length)}} rows</p>
+          <div class="table-wrap" style="max-height:620px"><table class="source-table ${{isMaster ? "master-table" : ""}}">${{masterCols}}<thead>${{masterGroups}}<tr>${{headers.map(header => `<th>${{esc(prettyHeader(header))}}</th>`).join("")}}</tr></thead><tbody>${{rows.map(row => `<tr>${{headers.map(header => `<td class="${{typeof row[header] === "number" ? "numeric" : ""}}">${{esc(sourceCell(row[header]))}}</td>`).join("")}}</tr>`).join("")}}</tbody></table></div>
+        </section>`;
+      document.getElementById("researchTableSelect").addEventListener("change", event => {{ state.researchTable = event.target.value; state.researchSearch = ""; renderResearchSources(); }});
+      document.getElementById("researchTableSearch").addEventListener("input", event => {{ state.researchSearch = event.target.value; renderResearchSources(); document.getElementById("researchTableSearch").focus(); }});
+      document.getElementById("researchTableClear").addEventListener("click", () => {{ state.researchSearch = ""; renderResearchSources(); }});
+    }}
+
+    function renderResearch() {{
+      renderResearchKpis();
+      renderSelfMention();
+      renderAppraisal();
+      renderEngagement();
+      renderModalFrames();
+      renderQuality();
+      renderResearchSources();
+    }}
+
+    function bindResearchNav() {{
+      document.querySelectorAll("[data-research-view]").forEach(button => button.addEventListener("click", () => {{
+        state.researchView = button.dataset.researchView;
+        document.querySelectorAll("[data-research-view]").forEach(item => item.classList.toggle("active", item === button));
+        document.querySelectorAll(".research-panel").forEach(panel => panel.classList.toggle("active", panel.id === `research-${{state.researchView}}`));
+        prepareScrollAnimations();
+      }}));
+    }}
+
     function bindTabs() {{
       document.querySelectorAll(".tab-btn").forEach(btn => btn.addEventListener("click", () => {{
         state.view = btn.dataset.view;
@@ -1263,7 +1775,7 @@ def build_html(data: dict[str, Any]) -> str:
     }}
 
     function updateFilterVisibility() {{
-      const hideFilters = state.view === "framework" || state.view === "summary";
+      const hideFilters = state.view === "framework" || state.view === "summary" || state.view === "linguistic";
       document.querySelector(".filters").classList.toggle("is-hidden", hideFilters);
     }}
 
@@ -1353,6 +1865,7 @@ def build_html(data: dict[str, Any]) -> str:
       renderFramework(DATA.analysis);
       renderSummary();
       renderTable(rows);
+      renderResearch();
       updateFilterVisibility();
       prepareScrollAnimations();
     }}
@@ -1361,6 +1874,7 @@ def build_html(data: dict[str, Any]) -> str:
     bindTabs();
     bindTableSort();
     bindSummarySort();
+    bindResearchNav();
     render();
   </script>
 </body>
@@ -1451,7 +1965,7 @@ def build_mobile_html(data: dict[str, Any]) -> str:
       bottom: 0;
       z-index: 20;
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 0;
       padding: 0;
       border-top: 1px solid var(--rule);
@@ -1706,6 +2220,33 @@ def build_mobile_html(data: dict[str, Any]) -> str:
 
     .scroll-table table {{ min-width: 720px; }}
 
+    .scroll-table .master-table {{ min-width: 3260px; table-layout: fixed; }}
+    .master-table th, .master-table td {{ white-space: nowrap; }}
+    .master-table td.numeric {{ text-align: right; font-family: var(--mono); }}
+    .master-table .master-groups th {{
+      color: var(--panel);
+      background: var(--ink);
+      border-right: 1px solid var(--ink-soft);
+      text-align: center;
+      letter-spacing: 0.07em;
+    }}
+    .master-table .master-groups th:first-child {{ position: sticky; left: 0; z-index: 4; }}
+    .master-table col:nth-child(1) {{ width: 58px; }}
+    .master-table col:nth-child(2) {{ width: 106px; }}
+    .master-table col:nth-child(3) {{ width: 144px; }}
+    .master-table col:nth-child(4) {{ width: 230px; }}
+    .master-table col:nth-child(5) {{ width: 310px; }}
+    .master-table col:nth-child(n+6):nth-child(-n+24) {{ width: 98px; }}
+    .master-table th:nth-child(5), .master-table td:nth-child(5) {{ white-space: normal; }}
+    .master-table th:nth-child(9), .master-table td:nth-child(9), .master-table th:nth-child(10), .master-table td:nth-child(10) {{ text-align: center; }}
+    .master-table col:nth-child(25) {{ width: 470px; }}
+    .master-table th:nth-child(25), .master-table td:nth-child(25) {{ white-space: normal; }}
+    .master-table thead tr:last-child th:nth-child(-n+3), .master-table tbody td:nth-child(-n+3) {{ position: sticky; z-index: 2; background: var(--panel); }}
+    .master-table thead tr:last-child th:nth-child(-n+3) {{ z-index: 3; background: var(--paper-2); }}
+    .master-table th:nth-child(1), .master-table td:nth-child(1) {{ left: 0; }}
+    .master-table th:nth-child(2), .master-table td:nth-child(2) {{ left: 58px; }}
+    .master-table th:nth-child(3), .master-table td:nth-child(3) {{ left: 164px; box-shadow: 6px 0 8px -8px rgba(27, 26, 22, 0.65); }}
+
     #heatmap th {{ text-transform: uppercase; font-size: 10.5px; line-height: 1.3; }}
     #heatmap td {{ font-family: var(--mono); }}
 
@@ -1763,6 +2304,36 @@ def build_mobile_html(data: dict[str, Any]) -> str:
 
     .framework-item p {{ margin: 0 0 6px; font-size: 13px; line-height: 1.5; color: var(--muted); }}
 
+    .research-switch {{ margin-bottom: 14px; }}
+
+    .mobile-rate-row {{
+      margin: 14px 0;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--line);
+    }}
+
+    .mobile-rate-head {{
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 7px;
+      font-size: 13px;
+    }}
+
+    .mobile-rate-head span {{ color: var(--muted); font-family: var(--mono); white-space: nowrap; }}
+    .mobile-stack {{ display: flex; height: 13px; overflow: hidden; background: var(--paper-2); }}
+    .mobile-stack i {{ display: block; height: 100%; }}
+
+    .mobile-finding {{
+      padding: 12px 0;
+      border-bottom: 1px solid var(--line);
+      color: var(--ink-soft);
+      font-size: 13px;
+      line-height: 1.45;
+    }}
+
+    .mobile-finding strong {{ color: var(--accent); font-family: var(--serif); font-size: 21px; margin-right: 7px; }}
+
     @media (min-width: 760px) {{
       body::before {{
         content: "This is the mobile dashboard. Open ../interactive_dashboard/index.html for the desktop version.";
@@ -1781,7 +2352,7 @@ def build_mobile_html(data: dict[str, Any]) -> str:
   <header>
     <p class="kicker">Mobile Dashboard</p>
     <h1>Prabowo Speeches</h1>
-    <p class="subtitle">A phone-friendly view of discourse patterns across the speech corpus.</p>
+    <p class="subtitle">A phone-friendly view of situational context and linguistic patterns across the speech corpus.</p>
   </header>
 
   <nav class="mobile-nav" aria-label="Mobile dashboard sections">
@@ -1789,6 +2360,7 @@ def build_mobile_html(data: dict[str, Any]) -> str:
     <button data-view="summary">Summary</button>
     <button data-view="framework">Framework</button>
     <button data-view="table">Table</button>
+    <button data-view="research">Analysis</button>
   </nav>
 
   <main>
@@ -1869,6 +2441,22 @@ def build_mobile_html(data: dict[str, Any]) -> str:
         </div>
       </article>
     </section>
+
+    <section id="research" class="view">
+      <article class="card">
+        <h2>Linguistic Analysis</h2>
+        <p class="speech-meta">Domestic sample: 29 speeches · International sample: 13 speeches. Rates are per 1,000 presidential words.</p>
+        <select id="mobileResearchSelect" class="research-switch" aria-label="Linguistic analysis view">
+          <option value="selfmention">Self-Mention</option>
+          <option value="appraisal">Appraisal</option>
+          <option value="engagement">Engagement</option>
+          <option value="modal">Modal Frames</option>
+          <option value="quality">Data Quality</option>
+          <option value="sources">Source Tables</option>
+        </select>
+        <div id="mobileResearchContent"></div>
+      </article>
+    </section>
   </main>
 
   <script>
@@ -1881,7 +2469,9 @@ def build_mobile_html(data: dict[str, Any]) -> str:
       interaction: "All interaction types",
       domain: "All field domains",
       page: 1,
-      pageSize: 12
+      pageSize: 12,
+      researchView: "selfmention",
+      researchTable: "T0_per_speech_master"
     }};
     const colors = ["#9a2b27", "#2f4858", "#876c34", "#4c5d4d", "#5a4a5c"];
     const fmt = new Intl.NumberFormat("en-US");
@@ -2124,6 +2714,71 @@ def build_mobile_html(data: dict[str, Any]) -> str:
       document.getElementById("nextPage").disabled = state.page >= totalPages;
     }}
 
+    function mobileResearchRows(key) {{
+      return DATA.research?.tables?.[key]?.rows || [];
+    }}
+
+    function mobileSourceCell(value) {{
+      if (value === true) return "Yes";
+      if (value === false) return "No";
+      if (value === "" || value == null) return "—";
+      return value;
+    }}
+
+    function mobileRateRows(rows, valueKey = "per_1000w", color = "var(--accent)") {{
+      const max = Math.max(...rows.map(row => Number(row[valueKey]) || 0), 1);
+      return rows.map(row => `
+        <div class="mobile-rate-row">
+          <div class="mobile-rate-head"><strong>${{esc(row.form || row.frame || row.pronoun_node)}}</strong><span>${{Number(row[valueKey]).toLocaleString("en-US", {{ maximumFractionDigits: 2 }})}} / 1k</span></div>
+          <div class="bar-track"><div class="bar-fill" style="background:${{color}};width:${{Math.max(2, Number(row[valueKey]) / max * 100)}}%"></div></div>
+        </div>`).join("");
+    }}
+
+    function renderMobileResearch() {{
+      const target = document.getElementById("mobileResearchContent");
+      if (state.researchView === "selfmention") {{
+        const rows = mobileResearchRows("T2_selfmention_sample").filter(row => row.form !== "TOTAL");
+        target.innerHTML = `<h3>Domestic Sample</h3>${{mobileRateRows(rows.filter(row => String(row.sample).startsWith("Domestic")))}}<h3>International Sample</h3>${{mobileRateRows(rows.filter(row => String(row.sample).startsWith("International")), "per_1000w", "var(--slate)")}}`;
+      }} else if (state.researchView === "appraisal") {{
+        const rows = mobileResearchRows("T5b_attitude_group_summary");
+        target.innerHTML = `<p class="speech-meta">Affect / Judgement / Appreciation share around each pronoun node.</p>${{rows.map(row => `
+          <div class="mobile-rate-row">
+            <div class="mobile-rate-head"><strong>${{esc(row.sample)}} · ${{esc(row.pronoun_node)}}</strong><span>${{row.attitude_per_1000w}} / 1k</span></div>
+            <div class="mobile-stack"><i style="width:${{row.AFF_pct}}%;background:var(--accent)"></i><i style="width:${{row.JUD_pct}}%;background:var(--slate)"></i><i style="width:${{row.APP_pct}}%;background:var(--ochre)"></i></div>
+            <p class="speech-meta">Affect ${{row.AFF_pct}}% · Judgement ${{row.JUD_pct}}% · Appreciation ${{row.APP_pct}}%</p>
+          </div>`).join("")}}`;
+      }} else if (state.researchView === "engagement") {{
+        const rows = mobileResearchRows("T6_engagement_hedge_booster");
+        const max = Math.max(...rows.flatMap(row => [Number(row.hedges_per1k), Number(row.boosters_per1k)]), 1);
+        target.innerHTML = `<p class="speech-meta">Ochre: hedges · Slate: boosters</p>${{rows.map(row => `
+          <div class="mobile-rate-row">
+            <div class="mobile-rate-head"><strong>${{esc(row.sample)}} · ${{esc(row.pronoun_node)}}</strong><span>ratio ${{row.hedge_booster_ratio}}</span></div>
+            <div class="bar-track"><div class="bar-fill" style="background:var(--ochre);width:${{Math.max(2, Number(row.hedges_per1k) / max * 100)}}%"></div></div>
+            <div class="bar-track" style="margin-top:4px"><div class="bar-fill" style="background:var(--slate);width:${{Math.max(2, Number(row.boosters_per1k) / max * 100)}}%"></div></div>
+            <p class="speech-meta">${{row.hedges_per1k}} hedges · ${{row.boosters_per1k}} boosters per 1,000</p>
+          </div>`).join("")}}`;
+      }} else if (state.researchView === "modal") {{
+        const rows = mobileResearchRows("T7_modal_frames");
+        const top = sample => [...rows.filter(row => String(row.sample).startsWith(sample))].sort((a, b) => Number(b.per_1000w) - Number(a.per_1000w)).slice(0, 8);
+        target.innerHTML = `<h3>Domestic Frames</h3>${{mobileRateRows(top("Domestic"))}}<h3>International Frames</h3>${{mobileRateRows(top("International"), "per_1000w", "var(--slate)")}}`;
+      }} else if (state.researchView === "quality") {{
+        const rows = mobileResearchRows("T8_data_hygiene_log").filter(row => Number(row.words_removed) > 0);
+        const removed = rows.reduce((sum, row) => sum + Number(row.words_removed), 0);
+        const exclusions = Object.entries(DATA.research.samples.excluded || {{}});
+        target.innerHTML = `<div class="mobile-finding"><strong>${{rows.length}}</strong>multi-speaker transcripts cleaned.</div><div class="mobile-finding"><strong>${{fmt.format(removed)}}</strong>non-Prabowo words removed.</div><h3>Sample Exclusions</h3>${{exclusions.map(([id, reason]) => `<div class="mobile-finding"><strong>${{id}}</strong>${{esc(reason)}}</div>`).join("")}}`;
+      }} else {{
+        const tables = DATA.research.tables;
+        const keys = Object.keys(tables);
+        const table = tables[state.researchTable] || tables[keys[0]];
+        const headers = table.rows.length ? Object.keys(table.rows[0]) : [];
+        const isMaster = state.researchTable === "T0_per_speech_master";
+        const masterGroups = isMaster ? `<tr class="master-groups"><th colspan="3">Identity</th><th colspan="2">Discourse Context</th><th colspan="3">Corpus Words</th><th colspan="2">Sample Membership</th><th colspan="9">Raw Self-Mentions</th><th colspan="5">Rate per 1,000</th><th>Speech</th></tr>` : "";
+        const masterCols = isMaster ? `<colgroup>${{headers.map(() => "<col>").join("")}}</colgroup>` : "";
+        target.innerHTML = `<select id="mobileResearchTable" aria-label="Source table">${{keys.map(key => `<option value="${{esc(key)}}" ${{tables[key] === table ? "selected" : ""}}>${{esc(tables[key].title)}}</option>`).join("")}}</select><p class="speech-meta">${{esc(table.source)}} · ${{table.rows.length}} rows</p><div class="scroll-table"><table class="${{isMaster ? "master-table" : ""}}">${{masterCols}}<thead>${{masterGroups}}<tr>${{headers.map(header => `<th>${{esc(header.replaceAll("_", " "))}}</th>`).join("")}}</tr></thead><tbody>${{table.rows.map(row => `<tr>${{headers.map(header => `<td class="${{typeof row[header] === "number" ? "numeric" : ""}}">${{esc(mobileSourceCell(row[header]))}}</td>`).join("")}}</tr>`).join("")}}</tbody></table></div>`;
+        document.getElementById("mobileResearchTable").addEventListener("change", event => {{ state.researchTable = event.target.value; renderMobileResearch(); }});
+      }}
+    }}
+
     function bindNav() {{
       document.querySelectorAll(".mobile-nav button").forEach(button => button.addEventListener("click", () => {{
         state.view = button.dataset.view;
@@ -2138,6 +2793,10 @@ def build_mobile_html(data: dict[str, Any]) -> str:
         state.page += 1;
         render();
       }});
+      document.getElementById("mobileResearchSelect").addEventListener("change", event => {{
+        state.researchView = event.target.value;
+        renderMobileResearch();
+      }});
     }}
 
     function render() {{
@@ -2151,6 +2810,7 @@ def build_mobile_html(data: dict[str, Any]) -> str:
       renderSummary();
       renderFramework();
       renderSpeechList(rows);
+      renderMobileResearch();
     }}
 
     initFilters();
@@ -2170,6 +2830,7 @@ def main() -> None:
         "framework": framework_rows(),
         "summary": summary_rows(),
         "visual": visual_mapping(),
+        "research": research_analysis(),
         "meta": {
             "generatedFrom": [DISCOURSE_XLSX.name, VISUAL_XLSX.name],
             "speechCount": len(analysis_rows),

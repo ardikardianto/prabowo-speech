@@ -1,0 +1,170 @@
+id,lang,presidential_words,field_domain,interaction_type,pop_A_full_corpus,pop_B_ge200w,pop_C_purposive_sample,excluded_as_duplicate_or_translation,tables_using_this_speech
+001,English,177,International diplomacy and strategic partnership,Ceremonial / policy address,yes,no,no,,T2
+002,Bahasa Indonesia,1278,Cabinet and executive governance,Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+003,Bahasa Indonesia,3884,General presidential communication,Presidential address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+004,Bahasa Indonesia,1653,Cabinet and executive governance,Cabinet/executive briefing,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+005,Bahasa Indonesia,787,"Defence, security, law, and public order",Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+006,Bahasa Indonesia,207,Cabinet and executive governance,Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+007,Bahasa Indonesia,589,International diplomacy and strategic partnership,Diplomatic exchange / joint statement,yes,yes,no,,T2 T3 T7 §4.4
+008,Bahasa Indonesia,403,Cabinet and executive governance,Cabinet/executive briefing,yes,yes,no,,T2 T3 T7 §4.4
+009,Bahasa Indonesia,385,International diplomacy and strategic partnership,Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+010,English,281,International diplomacy and strategic partnership,Diplomatic exchange / joint statement,yes,yes,no,,T2 §4.4
+011,English,467,International diplomacy and strategic partnership,Diplomatic exchange / joint statement,yes,yes,no,,T2 §4.4
+012,English,363,International diplomacy and strategic partnership,Diplomatic exchange / joint statement,yes,yes,no,,T2 §4.4
+013,English,610,International diplomacy and strategic partnership,Ceremonial / policy address,yes,yes,international,,T2 §4.4 T4 T5 T6
+014,Bahasa Indonesia,83,International diplomacy and strategic partnership,Press statement / media Q&A,yes,no,no,,T2
+015,English,118,International diplomacy and strategic partnership,Diplomatic exchange / joint statement,yes,no,no,,T2
+016,Bahasa Indonesia,193,"Defence, security, law, and public order",Press statement / media Q&A,yes,no,no,,T2
+017,English,1056,International diplomacy and strategic partnership,Ceremonial / policy address,yes,yes,international,,T2 §4.4 T4 T5 T6
+018,English,319,International diplomacy and strategic partnership,Diplomatic exchange / joint statement,yes,yes,no,,T2 §4.4
+019,English,150,International diplomacy and strategic partnership,Diplomatic exchange / joint statement,yes,no,no,,T2
+020,Bahasa Indonesia,59,International diplomacy and strategic partnership,Press statement / media Q&A,yes,no,no,,T2
+021,English,1286,International diplomacy and strategic partnership,Ceremonial / policy address,yes,yes,international,,T2 §4.4 T4 T5 T6
+022,English,434,International diplomacy and strategic partnership,Diplomatic exchange / joint statement,yes,yes,no,,T2 §4.4
+023,Bahasa Indonesia,288,International diplomacy and strategic partnership,Press statement / media Q&A,yes,yes,no,,T2 T3 T7 §4.4
+024,English,425,International diplomacy and strategic partnership,Ceremonial / policy address,yes,yes,no,,T2 §4.4
+025,English,559,International diplomacy and strategic partnership,Ceremonial / policy address,yes,yes,no,,T2 §4.4
+026,Bahasa Indonesia,381,"Economy, investment, and business",Press statement / media Q&A,yes,yes,no,,T2 T3 T7 §4.4
+027,Bahasa Indonesia,437,International diplomacy and strategic partnership,Diplomatic exchange / joint statement,yes,yes,no,,T2 T3 T7 §4.4
+028,Bahasa Indonesia,1800,Education and human-capital development,Presidential address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+029,Bahasa Indonesia,1875,"Economy, investment, and business",Presidential address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+030,Bahasa Indonesia,363,Cabinet and executive governance,Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+031,Bahasa Indonesia,1218,Cabinet and executive governance,Cabinet/executive briefing,yes,yes,no,,T2 T3 T7 §4.4
+032,English,319,International diplomacy and strategic partnership,Presidential address,yes,yes,no,,T2 §4.4
+033,Bahasa Indonesia,3627,"Religious, cultural, and social solidarity",Ceremonial / policy address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+034,English,631,"Economy, investment, and business",Ceremonial / policy address,yes,yes,international,,T2 §4.4 T4 T5 T6
+035,Bahasa Indonesia,1772,Cabinet and executive governance,Ceremonial / policy address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+036,Bahasa Indonesia,269,"Economy, investment, and business",Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+037,Bahasa Indonesia,216,"Religious, cultural, and social solidarity",Press statement / media Q&A,yes,yes,no,,T2 T3 T7 §4.4
+038,Bahasa Indonesia,186,"Infrastructure, energy, and natural resources",Ceremonial / policy address,yes,no,no,,T2
+039,Bahasa Indonesia,713,"Infrastructure, energy, and natural resources",Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+040,English,183,"Religious, cultural, and social solidarity",Press statement / media Q&A,yes,no,no,,T2
+041,Bahasa Indonesia,155,"Infrastructure, energy, and natural resources",Press statement / media Q&A,yes,no,no,,T2
+042,Bahasa Indonesia,161,Cabinet and executive governance,Cabinet/executive briefing,yes,no,no,,T2
+043,Bahasa Indonesia,295,International diplomacy and strategic partnership,Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+044,English,689,International diplomacy and strategic partnership,Diplomatic exchange / joint statement,yes,yes,international,,T2 §4.4 T4 T5 T6
+045,English,222,International diplomacy and strategic partnership,Press statement / media Q&A,yes,yes,no,,T2 §4.4
+046,Bahasa Indonesia,2395,Education and human-capital development,Presidential address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+047,English,2452,Education and human-capital development,Presidential address,yes,yes,no,yes,T2 §4.4
+048,Bahasa Indonesia,207,International diplomacy and strategic partnership,Press statement / media Q&A,yes,yes,no,,T2 T3 T7 §4.4
+049,Bahasa Indonesia,721,International diplomacy and strategic partnership,Diplomatic exchange / joint statement,yes,yes,no,,T2 T3 T7 §4.4
+050,English,656,International diplomacy and strategic partnership,Ceremonial / policy address,yes,yes,international,,T2 §4.4 T4 T5 T6
+051,English,656,International diplomacy and strategic partnership,Ceremonial / policy address,yes,yes,no,yes,T2 §4.4
+052,English,371,International diplomacy and strategic partnership,Ceremonial / policy address,yes,yes,no,,T2 §4.4
+053,English,371,International diplomacy and strategic partnership,Ceremonial / policy address,yes,yes,no,,T2 §4.4
+054,English,105,"Religious, cultural, and social solidarity",Public greeting / condolence,yes,no,no,yes,T2
+055,Bahasa Indonesia,106,"Religious, cultural, and social solidarity",Public greeting / condolence,yes,no,no,,T2
+056,Bahasa Indonesia,1649,"Religious, cultural, and social solidarity",Presidential address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+057,Bahasa Indonesia,2443,"Economy, investment, and business",Presidential address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+058,Bahasa Indonesia,775,Cabinet and executive governance,Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+059,Bahasa Indonesia,393,International diplomacy and strategic partnership,Press statement / media Q&A,yes,yes,no,,T2 T3 T7 §4.4
+060,Bahasa Indonesia,1156,"Economy, investment, and business",Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+061,Bahasa Indonesia,90,"Economy, investment, and business",Press statement / media Q&A,yes,no,no,,T2
+062,Bahasa Indonesia,948,"Infrastructure, energy, and natural resources",Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+063,Bahasa Indonesia,1960,Cabinet and executive governance,Cabinet/executive briefing,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+064,Bahasa Indonesia,662,"Infrastructure, energy, and natural resources",Press statement / media Q&A,yes,yes,no,,T2 T3 T7 §4.4
+065,Bahasa Indonesia,528,International diplomacy and strategic partnership,Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+066,Bahasa Indonesia,315,"Religious, cultural, and social solidarity",Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+067,Bahasa Indonesia,561,"Defence, security, law, and public order",Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+068,Bahasa Indonesia,1493,"Religious, cultural, and social solidarity",Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+069,Bahasa Indonesia,284,"Defence, security, law, and public order",Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+070,Bahasa Indonesia,135,"Religious, cultural, and social solidarity",Public greeting / condolence,yes,no,no,,T2
+071,Bahasa Indonesia,1079,"Economy, investment, and business",Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+072,Bahasa Indonesia,1104,"Economy, investment, and business",Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+073,Bahasa Indonesia,319,"Religious, cultural, and social solidarity",Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+074,English,1155,"Economy, investment, and business",Presidential address,yes,yes,international,,T2 §4.4 T4 T5 T6
+075,Bahasa Indonesia,402,"Economy, investment, and business",Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+076,Bahasa Indonesia,591,International diplomacy and strategic partnership,Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+077,Bahasa Indonesia,373,Cabinet and executive governance,Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+078,Bahasa Indonesia,1051,"Economy, investment, and business",Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+079,Bahasa Indonesia,99,"Economy, investment, and business",Press statement / media Q&A,yes,no,no,,T2
+080,Bahasa Indonesia,1053,"Economy, investment, and business",Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+081,Bahasa Indonesia,225,"Economy, investment, and business",Press statement / media Q&A,yes,yes,no,,T2 T3 T7 §4.4
+082,Bahasa Indonesia,2285,Cabinet and executive governance,Cabinet/executive briefing,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+083,Bahasa Indonesia,371,"Economy, investment, and business",Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+084,Bahasa Indonesia,59,"Sport, youth, and national morale",Press statement / media Q&A,yes,no,no,,T2
+085,Bahasa Indonesia,55,"Religious, cultural, and social solidarity",Press statement / media Q&A,yes,no,no,,T2
+086,Bahasa Indonesia,744,International diplomacy and strategic partnership,Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+087,Bahasa Indonesia,77,International diplomacy and strategic partnership,Press statement / media Q&A,yes,no,no,,T2
+088,Bahasa Indonesia,652,International diplomacy and strategic partnership,Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+089,Bahasa Indonesia,57,International diplomacy and strategic partnership,Presidential address,yes,no,no,,T2
+090,Bahasa Indonesia,120,International diplomacy and strategic partnership,Press statement / media Q&A,yes,no,no,,T2
+091,Bahasa Indonesia,122,"Religious, cultural, and social solidarity",Presidential address,yes,no,no,,T2
+092,Bahasa Indonesia,2723,"Food security, agriculture, and rural development",Presidential address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+093,Bahasa Indonesia,215,"Food security, agriculture, and rural development",Press statement / media Q&A,yes,yes,no,,T2 T3 T7 §4.4
+094,Bahasa Indonesia,223,"Economy, investment, and business",Press statement / media Q&A,yes,yes,no,,T2 T3 T7 §4.4
+095,Bahasa Indonesia,1578,"Economy, investment, and business",Presidential address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+096,Bahasa Indonesia,731,Health and public service,Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+097,Bahasa Indonesia,148,Health and public service,Press statement / media Q&A,yes,no,no,,T2
+098,Bahasa Indonesia,5434,Cabinet and executive governance,Cabinet/executive briefing,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+099,Bahasa Indonesia,2722,"Defence, security, law, and public order",Presidential address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+100,Bahasa Indonesia,502,Health and public service,Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+101,Bahasa Indonesia,370,"Defence, security, law, and public order",Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+102,Bahasa Indonesia,319,International diplomacy and strategic partnership,Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+103,English,746,International diplomacy and strategic partnership,Press statement / media Q&A,yes,yes,international,,T2 §4.4 T4 T5 T6
+104,Bahasa Indonesia,1494,International diplomacy and strategic partnership,Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+105,Bahasa Indonesia,706,"Infrastructure, energy, and natural resources",Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+106,Bahasa Indonesia,696,International diplomacy and strategic partnership,Diplomatic exchange / joint statement,yes,yes,no,,T2 T3 T7 §4.4
+107,Bahasa Indonesia,1163,"Economy, investment, and business",Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+108,Bahasa Indonesia,115,"Economy, investment, and business",Press statement / media Q&A,yes,no,no,,T2
+109,Bahasa Indonesia,1107,International diplomacy and strategic partnership,Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+110,Bahasa Indonesia,321,International diplomacy and strategic partnership,Press statement / media Q&A,yes,yes,no,,T2 T3 T7 §4.4
+111,Bahasa Indonesia,906,International diplomacy and strategic partnership,Press statement / media Q&A,yes,yes,no,,T2 T3 T7 §4.4
+112,Bahasa Indonesia,149,International diplomacy and strategic partnership,Press statement / media Q&A,yes,no,no,,T2
+113,English,48,International diplomacy and strategic partnership,Press statement / media Q&A,yes,no,no,,T2
+114,Bahasa Indonesia,202,International diplomacy and strategic partnership,Press statement / media Q&A,yes,yes,no,,T2 T3 T7 §4.4
+115,Bahasa Indonesia,213,International diplomacy and strategic partnership,Press statement / media Q&A,yes,yes,no,,T2 T3 T7 §4.4
+116,English,95,International diplomacy and strategic partnership,Press statement / media Q&A,yes,no,no,,T2
+117,Bahasa Indonesia,1768,"Economy, investment, and business",Presidential address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+118,Bahasa Indonesia,137,"Economy, investment, and business",Press statement / media Q&A,yes,no,no,,T2
+119,Bahasa Indonesia,33,"Sport, youth, and national morale",Press statement / media Q&A,yes,no,no,,T2
+120,Bahasa Indonesia,1529,Education and human-capital development,Presidential address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+121,Bahasa Indonesia,925,Education and human-capital development,Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+122,Bahasa Indonesia,1094,"Defence, security, law, and public order",Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+123,Bahasa Indonesia,2543,"Infrastructure, energy, and natural resources",Ceremonial / policy address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+124,English,620,International diplomacy and strategic partnership,Ceremonial / policy address,yes,yes,international,,T2 §4.4 T4 T5 T6
+125,English,1182,International diplomacy and strategic partnership,Diplomatic exchange / joint statement,yes,yes,international,,T2 §4.4 T4 T5 T6
+126,Bahasa Indonesia,477,International diplomacy and strategic partnership,Diplomatic exchange / joint statement,yes,yes,no,,T2 T3 T7 §4.4
+127,Bahasa Indonesia,227,International diplomacy and strategic partnership,Diplomatic exchange / joint statement,yes,yes,no,,T2 T3 T7 §4.4
+128,English,1841,"Economy, investment, and business",Ceremonial / policy address,yes,yes,international,,T2 §4.4 T4 T5 T6
+129,Bahasa Indonesia,1302,"Economy, investment, and business",Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+130,Bahasa Indonesia,265,Health and public service,Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+131,Bahasa Indonesia,2413,"Infrastructure, energy, and natural resources",Ceremonial / policy address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+132,Bahasa Indonesia,1135,"Defence, security, law, and public order",Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+133,English,1054,International diplomacy and strategic partnership,Diplomatic exchange / joint statement,yes,yes,international,,T2 §4.4 T4 T5 T6
+134,English,547,International diplomacy and strategic partnership,Diplomatic exchange / joint statement,yes,yes,no,,T2 §4.4
+135,English,432,International diplomacy and strategic partnership,Diplomatic exchange / joint statement,yes,yes,no,,T2 §4.4
+136,Bahasa Indonesia,734,International diplomacy and strategic partnership,Press statement / media Q&A,yes,yes,no,,T2 T3 T7 §4.4
+137,Bahasa Indonesia,499,General presidential communication,Press statement / media Q&A,yes,yes,no,,T2 T3 T7 §4.4
+138,Bahasa Indonesia,155,International diplomacy and strategic partnership,Press statement / media Q&A,yes,no,no,,T2
+139,Bahasa Indonesia,3500,"Economy, investment, and business",Presidential address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+140,Bahasa Indonesia,2465,General presidential communication,Presidential address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+141,Bahasa Indonesia,372,"Defence, security, law, and public order",Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+142,English,254,International diplomacy and strategic partnership,Ceremonial / policy address,yes,yes,no,,T2 §4.4
+143,Bahasa Indonesia,830,Education and human-capital development,Press statement / media Q&A,yes,yes,no,,T2 T3 T7 §4.4
+144,Bahasa Indonesia,133,International diplomacy and strategic partnership,Press statement / media Q&A,yes,no,no,,T2
+145,Bahasa Indonesia,107,Health and public service,Press statement / media Q&A,yes,no,no,,T2
+146,Bahasa Indonesia,360,International diplomacy and strategic partnership,Press statement / media Q&A,yes,yes,no,,T2 T3 T7 §4.4
+147,Bahasa Indonesia,2496,International diplomacy and strategic partnership,Presidential address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+148,Bahasa Indonesia,983,"Defence, security, law, and public order",Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+149,Bahasa Indonesia,211,"Defence, security, law, and public order",Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+150,Bahasa Indonesia,265,"Infrastructure, energy, and natural resources",Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+151,Bahasa Indonesia,262,"Defence, security, law, and public order",Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+152,Bahasa Indonesia,51,Education and human-capital development,Press statement / media Q&A,yes,no,no,,T2
+153,Bahasa Indonesia,1176,"Defence, security, law, and public order",Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+154,Bahasa Indonesia,6774,Cabinet and executive governance,Cabinet/executive briefing,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+155,Bahasa Indonesia,824,International diplomacy and strategic partnership,Press statement / media Q&A,yes,yes,no,,T2 T3 T7 §4.4
+156,Bahasa Indonesia,410,"Religious, cultural, and social solidarity",Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+157,Bahasa Indonesia,2481,"Defence, security, law, and public order",Presidential address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+158,Bahasa Indonesia,168,"Defence, security, law, and public order",Press statement / media Q&A,yes,no,no,,T2
+159,Bahasa Indonesia,3417,"Religious, cultural, and social solidarity",Presidential address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+160,Bahasa Indonesia,3521,"Food security, agriculture, and rural development",Presidential address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+161,Bahasa Indonesia,1546,Cabinet and executive governance,Cabinet/executive briefing,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+162,Bahasa Indonesia,1349,International diplomacy and strategic partnership,Presidential address,yes,yes,no,,T2 T3 T7 §4.4
+163,Bahasa Indonesia,3593,Education and human-capital development,Ceremonial / policy address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+164,Bahasa Indonesia,2567,"Infrastructure, energy, and natural resources",Ceremonial / policy address,yes,yes,domestic,,T2 T3 T7 §4.4 T4 T5 T6
+165,Bahasa Indonesia,1038,Education and human-capital development,Ceremonial / policy address,yes,yes,no,,T2 T3 T7 §4.4
+166,Bahasa Indonesia,219,International diplomacy and strategic partnership,Press statement / media Q&A,yes,yes,no,,T2 T3 T7 §4.4
+167,English,6,International diplomacy and strategic partnership,Diplomatic exchange / joint statement,yes,no,no,,T2
+168,English,111,International diplomacy and strategic partnership,Diplomatic exchange / joint statement,yes,no,no,,T2
+169,English,3505,International diplomacy and strategic partnership,Ceremonial / policy address,yes,yes,international,,T2 §4.4 T4 T5 T6

@@ -1,0 +1,10 @@
+subcorpus,interaction_type,texts,running_words,singular_per1k,kami_per1k,kita_per1k
+Bahasa Indonesia,Presidential address,44,58796,28.83,1.8,35.51
+Bahasa Indonesia,Ceremonial / policy address,28,35240,27.33,0.91,38.48
+Bahasa Indonesia,Cabinet/executive briefing,8,21273,26.75,0.52,51.1
+Bahasa Indonesia,Press statement / media Q&A,19,7918,31.19,5.68,49.38
+Bahasa Indonesia,Diplomatic exchange / joint statement,6,3147,27.65,30.82,12.71
+English,Ceremonial / policy address,14,12841,25.62,,54.05
+English,Diplomatic exchange / joint statement,10,5768,35.19,,49.58
+English,Presidential address,3,3926,32.09,,24.45
+English,Press statement / media Q&A,2,968,9.3,,10.33
