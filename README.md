@@ -15,7 +15,7 @@ Interactive dashboard for exploring situational context patterns in President Pr
 - Framework explorer.
 - Summary tables and visual mapping counts.
 - Searchable and sortable analysis table.
-- Linguistic analysis of self-mention, appraisal, engagement, modal frames, and data quality, with a searchable explorer for every table in `analysis/`.
+- Linguistic analysis of self-mention, appraisal, engagement, first-person verb frames, and data quality, with a searchable explorer for every table in `analysis/`.
 
 ## Rebuild
 

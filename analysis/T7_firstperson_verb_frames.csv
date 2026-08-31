@@ -1,0 +1,23 @@
+sample,function,frame,raw,per_1000w,running_words
+Domestic (BI),Deontic modality (obligation),saya harus,17,0.22,78413
+Domestic (BI),Deontic modality (obligation),kita harus,244,3.11,78413
+Domestic (BI),Deontic modality (obligation),kami harus,0,0.0,78413
+Domestic (BI),Future and prediction,saya akan,30,0.38,78413
+Domestic (BI),Future and prediction,kita akan,173,2.21,78413
+Domestic (BI),Epistemic modality (probability),saya kira,138,1.76,78413
+Domestic (BI),Epistemic modality (probability),saya yakin,25,0.32,78413
+Domestic (BI),Epistemic modality (probability),saya percaya,38,0.48,78413
+Domestic (BI),Non-modal: address formula,saya hormati,132,1.68,78413
+Domestic (BI),Hortative (proposal),mari kita,32,0.41,78413
+Domestic (BI),Hortative (proposal),marilah kita,37,0.47,78413
+Domestic (BI),Non-modal: Affect (happiness),kita bersyukur,29,0.37,78413
+Domestic (BI),Non-modal: emphatic reflexive,kita sendiri,38,0.48,78413
+International (EN),Epistemic modality (probability),i think,70,4.66,15031
+International (EN),Epistemic modality (probability),i believe,5,0.33,15031
+International (EN),Epistemic modality (probability),i would,21,1.4,15031
+International (EN),Deontic modality (obligation),we must,30,2.0,15031
+International (EN),Future and prediction,we will,38,2.53,15031
+International (EN),Deontic modality (obligation),we need,7,0.47,15031
+International (EN),Modality: ability,we can,17,1.13,15031
+International (EN),Non-modal: possessive frame,we have,81,5.39,15031
+International (EN),Non-modal: copular frame,we are,84,5.59,15031

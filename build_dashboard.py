@@ -28,7 +28,7 @@ ANALYSIS_TABLE_TITLES = {
     "T5_appraisal_attitude_by_pronoun": "Appraisal Attitude by Pronoun",
     "T5b_attitude_group_summary": "Appraisal Attitude Summary",
     "T6_engagement_hedge_booster": "Engagement: Hedges and Boosters",
-    "T7_modal_frames": "Modal Frames",
+    "T7_firstperson_verb_frames": "First-Person Verb Frames",
     "T8_data_hygiene_log": "Data Hygiene Log",
     "T9_speech_to_table_map": "Speech-to-Table Audit Map",
 }
@@ -1043,7 +1043,7 @@ def build_html(data: dict[str, Any]) -> str:
         <div>
           <p class="hero-kicker">Situational Context Analysis</p>
           <h1>Prabowo Speeches Discourse Dashboard</h1>
-          <p class="subtitle">Explore situational context across 169 speech transcripts, then move into self-mention, appraisal, engagement, modal framing, and the underlying research tables.</p>
+          <p class="subtitle">Explore situational context across 169 speech transcripts, then move into self-mention, appraisal, engagement, first-person verb framing, and the underlying research tables.</p>
         </div>
         <div class="source-stack">
           <span class="pill">Discourse workbook: Framework, Summary, Analysis Table</span>
@@ -1164,7 +1164,7 @@ def build_html(data: dict[str, Any]) -> str:
       <div class="research-head">
         <div>
           <h2>Linguistic Analysis</h2>
-          <p>Explore how Prabowo positions self and collective voice through pronouns, appraisal, engagement, and modal framing. Rates are normalized per 1,000 presidential words unless shown as percentages.</p>
+          <p>Explore how Prabowo positions self and collective voice through pronouns, appraisal, engagement, and first-person verb framing. Rates are normalized per 1,000 presidential words unless shown as percentages.</p>
         </div>
         <div class="sample-note" id="researchSampleNote"></div>
       </div>
@@ -1173,14 +1173,14 @@ def build_html(data: dict[str, Any]) -> str:
         <button class="active" data-research-view="selfmention">Self-Mention</button>
         <button data-research-view="appraisal">Appraisal</button>
         <button data-research-view="engagement">Engagement</button>
-        <button data-research-view="modal">Modal Frames</button>
+        <button data-research-view="frames">Verb Frames</button>
         <button data-research-view="quality">Data Quality</button>
         <button data-research-view="sources">Source Tables</button>
       </nav>
       <section id="research-selfmention" class="research-panel active"></section>
       <section id="research-appraisal" class="research-panel"></section>
       <section id="research-engagement" class="research-panel"></section>
-      <section id="research-modal" class="research-panel"></section>
+      <section id="research-frames" class="research-panel"></section>
       <section id="research-quality" class="research-panel"></section>
       <section id="research-sources" class="research-panel"></section>
     </section>
@@ -1577,7 +1577,7 @@ def build_html(data: dict[str, Any]) -> str:
       const max = Math.max(...rows.map(row => Number(row[valueKey]) || 0), 1);
       return `<div class="rate-chart">${{rows.map(row => `
         <div class="rate-row">
-          <div class="rate-label"><strong>${{esc(row.form || row.frame || row.pronoun_node)}}</strong><span>${{fmt.format(Number(row.raw) || Number(row.nodes) || 0)}} raw</span></div>
+          <div class="rate-label"><strong>${{esc(row.form || row.frame || row.pronoun_node)}}</strong><span>${{row.function ? `${{esc(row.function)}} · ` : ""}}${{fmt.format(Number(row.raw) || Number(row.nodes) || 0)}} raw</span></div>
           <div class="bar-track"><div class="bar-fill ${{colorClass}}" style="width:${{Math.max(2, (Number(row[valueKey]) || 0) / max * 100)}}%"></div></div>
           <div class="rate-value">${{formatMetric(row[valueKey])}} / 1k</div>
         </div>
@@ -1674,11 +1674,30 @@ def build_html(data: dict[str, Any]) -> str:
         </div>`;
     }}
 
-    function renderModalFrames() {{
-      const rows = researchRows("T7_modal_frames");
-      const panel = (title, items, color) => `
-        <section class="panel"><h2>${{title}}</h2><p class="panel-caption">Top frames by normalized frequency.</p>${{rateRows([...items].sort((a, b) => Number(b.per_1000w) - Number(a.per_1000w)).slice(0, 10), "per_1000w", color)}}</section>`;
-      document.getElementById("research-modal").innerHTML = `<div class="analysis-grid">${{panel("Domestic Modal Frames", rows.filter(row => String(row.sample).startsWith("Domestic")), "coral")}}${{panel("International Modal Frames", rows.filter(row => String(row.sample).startsWith("International")), "slate")}}</div>`;
+    function renderVerbFrames() {{
+      const rows = researchRows("T7_firstperson_verb_frames");
+      const domestic = rows.filter(row => String(row.sample).startsWith("Domestic"));
+      const international = rows.filter(row => String(row.sample).startsWith("International"));
+      const byFunction = items => {{
+        const groups = new Map();
+        items.forEach(row => {{
+          const current = groups.get(row.function) || {{ frame: row.function, raw: 0, per_1000w: 0 }};
+          current.raw += Number(row.raw) || 0;
+          current.per_1000w += Number(row.per_1000w) || 0;
+          groups.set(row.function, current);
+        }});
+        return [...groups.values()].sort((a, b) => b.per_1000w - a.per_1000w);
+      }};
+      const functionPanel = (title, items, color) => `
+        <section class="panel"><h2>${{title}}</h2><p class="panel-caption">Combined rate of frames assigned to each discourse function.</p>${{rateRows(byFunction(items), "per_1000w", color)}}</section>`;
+      const framePanel = (title, items, color) => `
+        <section class="panel"><h2>${{title}}</h2><p class="panel-caption">Individual first-person verb frames, ordered by normalized frequency.</p>${{rateRows([...items].sort((a, b) => Number(b.per_1000w) - Number(a.per_1000w)), "per_1000w", color)}}</section>`;
+      document.getElementById("research-frames").innerHTML = `<div class="analysis-grid">
+        ${{functionPanel("Domestic Functional Profile", domestic, "coral")}}
+        ${{functionPanel("International Functional Profile", international, "slate")}}
+        ${{framePanel("Domestic Verb Frames", domestic, "coral")}}
+        ${{framePanel("International Verb Frames", international, "slate")}}
+      </div>`;
     }}
 
     function renderQuality() {{
@@ -1750,7 +1769,7 @@ def build_html(data: dict[str, Any]) -> str:
       renderSelfMention();
       renderAppraisal();
       renderEngagement();
-      renderModalFrames();
+      renderVerbFrames();
       renderQuality();
       renderResearchSources();
     }}
@@ -2450,7 +2469,7 @@ def build_mobile_html(data: dict[str, Any]) -> str:
           <option value="selfmention">Self-Mention</option>
           <option value="appraisal">Appraisal</option>
           <option value="engagement">Engagement</option>
-          <option value="modal">Modal Frames</option>
+          <option value="frames">Verb Frames</option>
           <option value="quality">Data Quality</option>
           <option value="sources">Source Tables</option>
         </select>
@@ -2731,6 +2750,7 @@ def build_mobile_html(data: dict[str, Any]) -> str:
         <div class="mobile-rate-row">
           <div class="mobile-rate-head"><strong>${{esc(row.form || row.frame || row.pronoun_node)}}</strong><span>${{Number(row[valueKey]).toLocaleString("en-US", {{ maximumFractionDigits: 2 }})}} / 1k</span></div>
           <div class="bar-track"><div class="bar-fill" style="background:${{color}};width:${{Math.max(2, Number(row[valueKey]) / max * 100)}}%"></div></div>
+          ${{row.function ? `<p class="speech-meta">${{esc(row.function)}} · ${{fmt.format(Number(row.raw) || 0)}} raw</p>` : ""}}
         </div>`).join("");
     }}
 
@@ -2757,10 +2777,22 @@ def build_mobile_html(data: dict[str, Any]) -> str:
             <div class="bar-track" style="margin-top:4px"><div class="bar-fill" style="background:var(--slate);width:${{Math.max(2, Number(row.boosters_per1k) / max * 100)}}%"></div></div>
             <p class="speech-meta">${{row.hedges_per1k}} hedges · ${{row.boosters_per1k}} boosters per 1,000</p>
           </div>`).join("")}}`;
-      }} else if (state.researchView === "modal") {{
-        const rows = mobileResearchRows("T7_modal_frames");
-        const top = sample => [...rows.filter(row => String(row.sample).startsWith(sample))].sort((a, b) => Number(b.per_1000w) - Number(a.per_1000w)).slice(0, 8);
-        target.innerHTML = `<h3>Domestic Frames</h3>${{mobileRateRows(top("Domestic"))}}<h3>International Frames</h3>${{mobileRateRows(top("International"), "per_1000w", "var(--slate)")}}`;
+      }} else if (state.researchView === "frames") {{
+        const rows = mobileResearchRows("T7_firstperson_verb_frames");
+        const sampleRows = sample => [...rows.filter(row => String(row.sample).startsWith(sample))].sort((a, b) => Number(b.per_1000w) - Number(a.per_1000w));
+        const byFunction = items => {{
+          const groups = new Map();
+          items.forEach(row => {{
+            const current = groups.get(row.function) || {{ frame: row.function, raw: 0, per_1000w: 0 }};
+            current.raw += Number(row.raw) || 0;
+            current.per_1000w += Number(row.per_1000w) || 0;
+            groups.set(row.function, current);
+          }});
+          return [...groups.values()].sort((a, b) => b.per_1000w - a.per_1000w);
+        }};
+        const domestic = sampleRows("Domestic");
+        const international = sampleRows("International");
+        target.innerHTML = `<h3>Domestic Functional Profile</h3>${{mobileRateRows(byFunction(domestic))}}<h3>International Functional Profile</h3>${{mobileRateRows(byFunction(international), "per_1000w", "var(--slate)")}}<h3>Domestic Verb Frames</h3>${{mobileRateRows(domestic)}}<h3>International Verb Frames</h3>${{mobileRateRows(international, "per_1000w", "var(--slate)")}}`;
       }} else if (state.researchView === "quality") {{
         const rows = mobileResearchRows("T8_data_hygiene_log").filter(row => Number(row.words_removed) > 0);
         const removed = rows.reduce((sum, row) => sum + Number(row.words_removed), 0);
