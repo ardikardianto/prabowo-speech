@@ -31,6 +31,9 @@ ANALYSIS_TABLE_TITLES = {
     "T7_firstperson_verb_frames": "First-Person Verb Frames",
     "T8_data_hygiene_log": "Data Hygiene Log",
     "T9_speech_to_table_map": "Speech-to-Table Audit Map",
+    "T10_density_epistemic_master": "Density & Epistemicity: Per Speech",
+    "T12_class_by_field": "Epistemic Classes by Field",
+    "T13_marker_inventory": "Epistemic Marker Inventory",
 }
 
 
@@ -66,7 +69,12 @@ def csv_rows(path: Path) -> list[dict[str, Any]]:
 
 def research_analysis() -> dict[str, Any]:
     tables = {}
-    for path in sorted(ANALYSIS_DIR.glob("T*.csv")):
+    def table_order(path: Path) -> tuple[int, str]:
+        prefix = path.stem.split("_", 1)[0]
+        number = "".join(char for char in prefix if char.isdigit())
+        return (int(number) if number else 999, prefix)
+
+    for path in sorted(ANALYSIS_DIR.glob("T*.csv"), key=table_order):
         key = path.stem
         tables[key] = {
             "title": ANALYSIS_TABLE_TITLES.get(key, key.replace("_", " ")),
@@ -1043,7 +1051,7 @@ def build_html(data: dict[str, Any]) -> str:
         <div>
           <p class="hero-kicker">Situational Context Analysis</p>
           <h1>Prabowo Speeches Discourse Dashboard</h1>
-          <p class="subtitle">Explore situational context across 169 speech transcripts, then move into self-mention, appraisal, engagement, first-person verb framing, and the underlying research tables.</p>
+          <p class="subtitle">Explore situational context across 169 speech transcripts, then move into self-mention, appraisal, engagement, verb framing, lexical density, epistemicity, and the underlying research tables.</p>
         </div>
         <div class="source-stack">
           <span class="pill">Discourse workbook: Framework, Summary, Analysis Table</span>
@@ -1164,7 +1172,7 @@ def build_html(data: dict[str, Any]) -> str:
       <div class="research-head">
         <div>
           <h2>Linguistic Analysis</h2>
-          <p>Explore how Prabowo positions self and collective voice through pronouns, appraisal, engagement, and first-person verb framing. Rates are normalized per 1,000 presidential words unless shown as percentages.</p>
+          <p>Explore how Prabowo positions self and collective voice through pronouns, appraisal, engagement, verb framing, lexical density, and epistemicity. Rates are normalized per 1,000 presidential words unless shown as percentages.</p>
         </div>
         <div class="sample-note" id="researchSampleNote"></div>
       </div>
@@ -1174,6 +1182,9 @@ def build_html(data: dict[str, Any]) -> str:
         <button data-research-view="appraisal">Appraisal</button>
         <button data-research-view="engagement">Engagement</button>
         <button data-research-view="frames">Verb Frames</button>
+        <button data-research-view="density">Density & Epistemicity</button>
+        <button data-research-view="field-epistemic">Epistemic by Field</button>
+        <button data-research-view="markers">Marker Inventory</button>
         <button data-research-view="quality">Data Quality</button>
         <button data-research-view="sources">Source Tables</button>
       </nav>
@@ -1181,6 +1192,9 @@ def build_html(data: dict[str, Any]) -> str:
       <section id="research-appraisal" class="research-panel"></section>
       <section id="research-engagement" class="research-panel"></section>
       <section id="research-frames" class="research-panel"></section>
+      <section id="research-density" class="research-panel"></section>
+      <section id="research-field-epistemic" class="research-panel"></section>
+      <section id="research-markers" class="research-panel"></section>
       <section id="research-quality" class="research-panel"></section>
       <section id="research-sources" class="research-panel"></section>
     </section>
@@ -1700,6 +1714,146 @@ def build_html(data: dict[str, Any]) -> str:
       </div>`;
     }}
 
+    function renderDensityEpistemicity() {{
+      const rows = researchRows("T10_density_epistemic_master");
+      const total = key => rows.reduce((sum, row) => sum + (Number(row[key]) || 0), 0);
+      const words = total("prabowo_words");
+      const lexical = total("lexical");
+      const grammatical = total("grammatical");
+      const proper = total("proper");
+      const numeral = total("numeral");
+      const epistemic = total("epi_total");
+      const density = lexical / Math.max(lexical + grammatical, 1) * 100;
+      const densityWithProper = (lexical + proper) / Math.max(lexical + grammatical + proper + numeral, 1) * 100;
+      const epiRate = epistemic / Math.max(words, 1) * 1000;
+      const classKeys = [
+        ["Cognitive verb", "epi_cognitive_verb"],
+        ["Adverbial", "epi_adverbial"],
+        ["Adjectival", "epi_adjectival"],
+        ["Deferential", "epi_deferential"]
+      ];
+      const classRows = classKeys.map(([label, key]) => ({{ frame: label, raw: total(key), per_1000w: total(key) / Math.max(words, 1) * 1000 }}));
+      const byDelivery = mode => {{
+        const items = rows.filter(row => row.scripted === mode);
+        const sum = key => items.reduce((value, row) => value + (Number(row[key]) || 0), 0);
+        const modeWords = sum("prabowo_words");
+        const modeLexical = sum("lexical");
+        const modeGrammatical = sum("grammatical");
+        return {{
+          mode,
+          speeches: items.length,
+          words: modeWords,
+          density: modeLexical / Math.max(modeLexical + modeGrammatical, 1) * 100,
+          epistemic: sum("epi_total"),
+          epiRate: sum("epi_total") / Math.max(modeWords, 1) * 1000
+        }};
+      }};
+      const delivery = [byDelivery("scripted"), byDelivery("spontaneous")];
+      const top = [...rows].filter(row => Number(row.epi_total) > 0).sort((a, b) => Number(b.epi_total_per1k) - Number(a.epi_total_per1k)).slice(0, 12);
+      const kpis = [
+        ["Speeches", fmt.format(rows.length), "Per-speech analytical master"],
+        ["Presidential Words", fmt.format(words), "Across the T10 corpus"],
+        ["Lexical Density", `${{formatMetric(density, 1)}}%`, "Proper nouns excluded"],
+        ["Density + Proper", `${{formatMetric(densityWithProper, 1)}}%`, "Proper nouns counted as lexical"],
+        ["Epistemic Markers", fmt.format(epistemic), `${{formatMetric(epiRate)}} per 1,000 words`]
+      ];
+      document.getElementById("research-density").innerHTML = `
+        <div class="kpi-grid research-kpis">${{kpis.map(kpi => `<article class="kpi"><div class="kpi-label">${{kpi[0]}}</div><div class="kpi-value">${{kpi[1]}}</div><div class="kpi-note">${{kpi[2]}}</div></article>`).join("")}}</div>
+        <div class="analysis-grid">
+          <section class="panel">
+            <h2>Epistemic Class Profile</h2>
+            <p class="panel-caption">Aggregated marker rates across the T10 corpus.</p>
+            ${{rateRows(classRows, "per_1000w", "coral")}}
+          </section>
+          <section class="panel">
+            <h2>Delivery Mode Comparison</h2>
+            <p class="panel-caption">Weighted density and epistemic rate for scripted and spontaneous speeches.</p>
+            <table class="summary-table"><thead><tr><th>Mode</th><th>Speeches</th><th>Density</th><th>Markers / 1k</th></tr></thead><tbody>${{delivery.map(row => `<tr><td><strong>${{prettyHeader(row.mode)}}</strong></td><td>${{fmt.format(row.speeches)}}</td><td>${{formatMetric(row.density, 1)}}%</td><td>${{formatMetric(row.epiRate)}}</td></tr>`).join("")}}</tbody></table>
+          </section>
+          <section class="panel wide">
+            <h2>Highest Epistemic Rates by Speech</h2>
+            <p class="panel-caption">Speeches with at least one epistemic marker, ranked by markers per 1,000 words.</p>
+            <div class="table-wrap" style="max-height:480px"><table class="summary-table"><thead><tr><th>ID</th><th>Date</th><th>Speech/Event</th><th>Delivery</th><th>Words</th><th>Markers</th><th>Per 1,000</th></tr></thead><tbody>${{top.map(row => `<tr><td>${{esc(row.id)}}</td><td>${{esc(row.date)}}</td><td>${{esc(row.event)}}</td><td>${{prettyHeader(row.scripted)}}</td><td>${{fmt.format(row.prabowo_words)}}</td><td>${{fmt.format(row.epi_total)}}</td><td>${{formatMetric(row.epi_total_per1k)}}</td></tr>`).join("")}}</tbody></table></div>
+          </section>
+        </div>`;
+    }}
+
+    function renderEpistemicByField() {{
+      const rows = researchRows("T12_class_by_field");
+      const classes = [
+        ["Cognitive verb", "epi_cognitive_verb", "var(--accent)"],
+        ["Adverbial", "epi_adverbial", "var(--slate)"],
+        ["Adjectival", "epi_adjectival", "var(--ochre)"],
+        ["Deferential", "epi_deferential", "#4c5d4d"]
+      ];
+      const classTotals = classes.map(([label, key, color]) => [label, rows.reduce((sum, row) => sum + (Number(row[key]) || 0), 0), color]);
+      const grandTotal = classTotals.reduce((sum, item) => sum + item[1], 0);
+      document.getElementById("research-field-epistemic").innerHTML = `
+        <div class="kpi-grid research-kpis">
+          <article class="kpi"><div class="kpi-label">All Markers</div><div class="kpi-value">${{fmt.format(grandTotal)}}</div><div class="kpi-note">Across six consolidated fields</div></article>
+          ${{classTotals.map(([label, value]) => `<article class="kpi"><div class="kpi-label">${{label}}</div><div class="kpi-value">${{fmt.format(value)}}</div><div class="kpi-note">${{pct(value / Math.max(grandTotal, 1))}} of field-coded markers</div></article>`).join("")}}
+        </div>
+        <div class="analysis-grid">
+          <section class="panel wide">
+            <h2>Epistemic Class Composition by Field</h2>
+            <p class="panel-caption">Each bar shows the within-field share of cognitive verbs, adverbials, adjectivals, and deferentials.</p>
+            <div class="analysis-legend">${{classTotals.map(([label, , color]) => `<span><i class="swatch" style="background:${{color}}"></i>${{label}}</span>`).join("")}}</div>
+            ${{rows.map(row => {{
+              const total = classes.reduce((sum, [, key]) => sum + (Number(row[key]) || 0), 0);
+              return `<div class="attitude-row"><div class="attitude-row-head"><strong>${{esc(row.field6)}}</strong><span>${{fmt.format(total)}} markers</span></div><div class="stacked-bar">${{classes.map(([, key, color]) => `<i title="${{key}}: ${{row[key]}}" style="width:${{Number(row[key]) / Math.max(total, 1) * 100}}%;background:${{color}}"></i>`).join("")}}</div></div>`;
+            }}).join("")}}
+          </section>
+          <section class="panel wide">
+            <h2>Field Counts</h2>
+            <div class="table-wrap" style="max-height:440px"><table class="summary-table"><thead><tr><th>Field</th>${{classes.map(([label]) => `<th>${{label}}</th>`).join("")}}<th>Total</th></tr></thead><tbody>${{rows.map(row => {{ const total = classes.reduce((sum, [, key]) => sum + (Number(row[key]) || 0), 0); return `<tr><td><strong>${{esc(row.field6)}}</strong></td>${{classes.map(([, key]) => `<td>${{fmt.format(row[key])}}</td>`).join("")}}<td>${{fmt.format(total)}}</td></tr>`; }}).join("")}}</tbody></table></div>
+          </section>
+        </div>`;
+    }}
+
+    function renderMarkerInventory() {{
+      const rows = researchRows("T13_marker_inventory");
+      const retained = rows.filter(row => String(row.retained).toLowerCase() === "yes");
+      const excluded = rows.filter(row => String(row.retained).toLowerCase() !== "yes");
+      const rawRetained = retained.reduce((sum, row) => sum + (Number(row.raw_analysis_set) || 0), 0);
+      const classMap = new Map();
+      retained.forEach(row => {{
+        const label = prettyHeader(row.class);
+        const current = classMap.get(label) || {{ frame: label, raw: 0, per1k_analysis_set: 0 }};
+        current.raw += Number(row.raw_analysis_set) || 0;
+        current.per1k_analysis_set += Number(row.per1k_analysis_set) || 0;
+        classMap.set(label, current);
+      }});
+      const classRows = [...classMap.values()].sort((a, b) => b.per1k_analysis_set - a.per1k_analysis_set);
+      const ranked = [...retained].sort((a, b) => Number(b.per1k_analysis_set) - Number(a.per1k_analysis_set));
+      const top = ranked[0] || {{ marker: "—", raw_analysis_set: 0 }};
+      const kpis = [
+        ["Inventory", fmt.format(rows.length), "Candidate marker forms"],
+        ["Retained", fmt.format(retained.length), `${{pct(retained.length / Math.max(rows.length, 1))}} of inventory`],
+        ["Excluded", fmt.format(excluded.length), "Below retention criteria"],
+        ["Retained Tokens", fmt.format(rawRetained), "Occurrences in analysis set"],
+        ["Top Marker", esc(top.marker), `${{fmt.format(top.raw_analysis_set)}} analysis-set tokens`]
+      ];
+      document.getElementById("research-markers").innerHTML = `
+        <div class="kpi-grid research-kpis">${{kpis.map(kpi => `<article class="kpi"><div class="kpi-label">${{kpi[0]}}</div><div class="kpi-value">${{kpi[1]}}</div><div class="kpi-note">${{kpi[2]}}</div></article>`).join("")}}</div>
+        <div class="analysis-grid">
+          <section class="panel">
+            <h2>Retained Markers by Class</h2>
+            <p class="panel-caption">Combined normalized rate for retained markers in each epistemic class.</p>
+            ${{rateRows(classRows, "per1k_analysis_set", "coral")}}
+          </section>
+          <section class="panel">
+            <h2>Highest-Rate Retained Markers</h2>
+            <p class="panel-caption">Top 15 forms in the analysis set.</p>
+            ${{rateRows(ranked.slice(0, 15).map(row => ({{ ...row, frame: row.marker, raw: row.raw_analysis_set }})), "per1k_analysis_set", "slate")}}
+          </section>
+          <section class="panel wide">
+            <h2>Excluded Candidate Markers</h2>
+            <p class="panel-caption">Forms retained in the audit inventory but not carried into the final analysis set.</p>
+            <div class="table-wrap" style="max-height:420px"><table class="summary-table"><thead><tr><th>Marker</th><th>Class</th><th>Full-Subcorpus Raw</th><th>Speeches</th><th>Analysis-Set Raw</th><th>Per 1,000</th></tr></thead><tbody>${{excluded.map(row => `<tr><td><strong>${{esc(row.marker)}}</strong></td><td>${{prettyHeader(row.class)}}</td><td>${{fmt.format(row.raw_full_subcorpus)}}</td><td>${{fmt.format(row.speeches_full_subcorpus)}}</td><td>${{fmt.format(row.raw_analysis_set)}}</td><td>${{formatMetric(row.per1k_analysis_set, 3)}}</td></tr>`).join("")}}</tbody></table></div>
+          </section>
+        </div>`;
+    }}
+
     function renderQuality() {{
       const rows = researchRows("T8_data_hygiene_log");
       const cleaned = rows.filter(row => Number(row.words_removed) > 0);
@@ -1770,6 +1924,9 @@ def build_html(data: dict[str, Any]) -> str:
       renderAppraisal();
       renderEngagement();
       renderVerbFrames();
+      renderDensityEpistemicity();
+      renderEpistemicByField();
+      renderMarkerInventory();
       renderQuality();
       renderResearchSources();
     }}
@@ -2470,6 +2627,9 @@ def build_mobile_html(data: dict[str, Any]) -> str:
           <option value="appraisal">Appraisal</option>
           <option value="engagement">Engagement</option>
           <option value="frames">Verb Frames</option>
+          <option value="density">Density &amp; Epistemicity</option>
+          <option value="field-epistemic">Epistemic by Field</option>
+          <option value="markers">Marker Inventory</option>
           <option value="quality">Data Quality</option>
           <option value="sources">Source Tables</option>
         </select>
@@ -2793,6 +2953,25 @@ def build_mobile_html(data: dict[str, Any]) -> str:
         const domestic = sampleRows("Domestic");
         const international = sampleRows("International");
         target.innerHTML = `<h3>Domestic Functional Profile</h3>${{mobileRateRows(byFunction(domestic))}}<h3>International Functional Profile</h3>${{mobileRateRows(byFunction(international), "per_1000w", "var(--slate)")}}<h3>Domestic Verb Frames</h3>${{mobileRateRows(domestic)}}<h3>International Verb Frames</h3>${{mobileRateRows(international, "per_1000w", "var(--slate)")}}`;
+      }} else if (state.researchView === "density") {{
+        const rows = mobileResearchRows("T10_density_epistemic_master");
+        const sum = key => rows.reduce((total, row) => total + (Number(row[key]) || 0), 0);
+        const words = sum("prabowo_words");
+        const density = sum("lexical") / Math.max(sum("lexical") + sum("grammatical"), 1) * 100;
+        const epiRate = sum("epi_total") / Math.max(words, 1) * 1000;
+        const classes = [["Cognitive verb", "epi_cognitive_verb"], ["Adverbial", "epi_adverbial"], ["Adjectival", "epi_adjectival"], ["Deferential", "epi_deferential"]].map(([frame, key]) => ({{ frame, raw: sum(key), per_1000w: sum(key) / Math.max(words, 1) * 1000 }}));
+        const top = [...rows].filter(row => Number(row.epi_total) > 0).sort((a, b) => Number(b.epi_total_per1k) - Number(a.epi_total_per1k)).slice(0, 8).map(row => ({{ frame: `${{row.id}} · ${{row.event}}`, raw: row.epi_total, per_1000w: row.epi_total_per1k }}));
+        target.innerHTML = `<div class="mobile-finding"><strong>${{rows.length}}</strong>speeches in the per-speech master.</div><div class="mobile-finding"><strong>${{density.toFixed(1)}}%</strong>weighted lexical density, excluding proper nouns.</div><div class="mobile-finding"><strong>${{sum("epi_total")}}</strong>epistemic markers (${{epiRate.toFixed(2)}} per 1,000 words).</div><h3>Epistemic Class Profile</h3>${{mobileRateRows(classes)}}<h3>Highest-Rate Speeches</h3>${{mobileRateRows(top, "per_1000w", "var(--slate)")}}`;
+      }} else if (state.researchView === "field-epistemic") {{
+        const rows = mobileResearchRows("T12_class_by_field");
+        const classes = [["Cognitive verb", "epi_cognitive_verb", "var(--accent)"], ["Adverbial", "epi_adverbial", "var(--slate)"], ["Adjectival", "epi_adjectival", "var(--ochre)"], ["Deferential", "epi_deferential", "#4c5d4d"]];
+        target.innerHTML = `<p class="speech-meta">Cognitive verb · Adverbial · Adjectival · Deferential</p>${{rows.map(row => {{ const total = classes.reduce((sum, [, key]) => sum + Number(row[key] || 0), 0); return `<div class="mobile-rate-row"><div class="mobile-rate-head"><strong>${{esc(row.field6)}}</strong><span>${{total}} markers</span></div><div class="mobile-stack">${{classes.map(([, key, color]) => `<i style="width:${{Number(row[key]) / Math.max(total, 1) * 100}}%;background:${{color}}"></i>`).join("")}}</div><p class="speech-meta">${{classes.map(([label, key]) => `${{label}} ${{row[key]}}`).join(" · ")}}</p></div>`; }}).join("")}}`;
+      }} else if (state.researchView === "markers") {{
+        const rows = mobileResearchRows("T13_marker_inventory");
+        const retained = rows.filter(row => String(row.retained).toLowerCase() === "yes");
+        const excluded = rows.filter(row => String(row.retained).toLowerCase() !== "yes");
+        const ranked = [...retained].sort((a, b) => Number(b.per1k_analysis_set) - Number(a.per1k_analysis_set)).slice(0, 15).map(row => ({{ frame: row.marker, raw: row.raw_analysis_set, per1k_analysis_set: row.per1k_analysis_set }}));
+        target.innerHTML = `<div class="mobile-finding"><strong>${{rows.length}}</strong>candidate marker forms.</div><div class="mobile-finding"><strong>${{retained.length}}</strong>retained · ${{excluded.length}} excluded.</div><h3>Highest-Rate Retained Markers</h3>${{mobileRateRows(ranked, "per1k_analysis_set")}}<h3>Excluded Candidates</h3>${{excluded.map(row => `<div class="mobile-finding"><strong>${{esc(row.marker)}}</strong>${{esc(row.class.replaceAll("_", " "))}} · ${{row.raw_analysis_set}} analysis-set tokens</div>`).join("")}}`;
       }} else if (state.researchView === "quality") {{
         const rows = mobileResearchRows("T8_data_hygiene_log").filter(row => Number(row.words_removed) > 0);
         const removed = rows.reduce((sum, row) => sum + Number(row.words_removed), 0);
